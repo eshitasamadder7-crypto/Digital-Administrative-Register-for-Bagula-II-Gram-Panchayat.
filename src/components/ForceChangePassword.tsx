@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { KeyRound, Eye, EyeOff, Clock } from "lucide-react";
 import { logActivity } from "@/lib/activityLog";
 import { markTempPasswordConsumed, getRemainingTempMinutes } from "@/lib/tempAdminCredentials";
+import { validatePassword, checkPasswordMatch } from "@/lib/passwordPolicy";
+import { PasswordRequirementsIndicator } from "@/components/PasswordRequirementsIndicator";
 
 /**
  * Shown after the first sign-in with a Super-Admin-issued temporary password.
@@ -24,11 +26,12 @@ export default function ForceChangePassword({
   const [showConfirm, setShowConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  const validation = validatePassword(pw);
+  const matchResult = checkPasswordMatch(pw, confirm);
+
   const problem = (): string | null => {
-    if (pw.length < 8) return "Password must be at least 8 characters.";
-    if (!/[A-Za-z]/.test(pw)) return "Password must contain a letter.";
-    if (!/[0-9]/.test(pw)) return "Password must contain a number.";
-    if (pw !== confirm) return "The two passwords do not match.";
+    if (!validation.isValid) return validation.errorMessage;
+    if (!matchResult.matches) return "The two passwords do not match.";
     return null;
   };
 
@@ -152,7 +155,18 @@ export default function ForceChangePassword({
             </button>
           </div>
         </div>
-        <Button type="submit" className="w-full" disabled={busy}>
+
+        <PasswordRequirementsIndicator
+          password={pw}
+          confirmPassword={confirm}
+          showMatch={Boolean(pw || confirm)}
+        />
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={busy || !validation.isValid || !matchResult.matches}
+        >
           {busy ? "Saving…" : "Set password"}
         </Button>
         <button

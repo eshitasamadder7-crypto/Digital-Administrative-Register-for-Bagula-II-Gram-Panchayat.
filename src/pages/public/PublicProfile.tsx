@@ -7,9 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BackButton } from "@/components/BackButton";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, ShieldCheck } from "lucide-react";
 import PublicShell from "./PublicShell";
 import { toast } from "sonner";
+import { validatePassword, checkPasswordMatch } from "@/lib/passwordPolicy";
+import { PasswordRequirementsIndicator } from "@/components/PasswordRequirementsIndicator";
+import { useAuthenticationSettings } from "@/lib/authenticationSettings";
 
 const demoProfile = {
   name: "Sri Ramen Biswas",
@@ -26,13 +29,6 @@ const demoProfile = {
   email: "ramen.biswas@example.com",
   username: "ramen.biswas",
 };
-
-const tabs = [
-  { to: "/public/profile", label: "My Profile" },
-  { to: "/public/profile/edit", label: "Edit Profile" },
-  { to: "/public/profile/password", label: "Change Password" },
-  { to: "/public/profile/language", label: "Language" },
-];
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -55,6 +51,17 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { effectiveCitizenMethods } = useAuthenticationSettings();
+
+  const tabs = [
+    { to: "/public/profile", label: "My Profile" },
+    { to: "/public/profile/edit", label: "Edit Profile" },
+    ...(effectiveCitizenMethods.allowPassword
+      ? [{ to: "/public/profile/password", label: "Change Password" }]
+      : []),
+    { to: "/public/profile/language", label: "Language" },
+  ];
+
   return (
     <PublicShell>
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-5">
@@ -141,6 +148,8 @@ export function EditProfile() {
 }
 
 export function ChangePassword() {
+  const navigate = useNavigate();
+  const { effectiveCitizenMethods } = useAuthenticationSettings();
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
@@ -148,17 +157,41 @@ export function ChangePassword() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  if (!effectiveCitizenMethods.allowPassword) {
+    return (
+      <Layout>
+        <Helmet><title>Password Authentication Disabled — Bagula II Gram Panchayat</title></Helmet>
+        <Card className="p-6 space-y-4 max-w-md border-l-4 border-l-primary">
+          <div className="flex items-center gap-2.5 text-primary font-bold text-sm">
+            <Mail className="h-5 w-5" />
+            <span>OTP-Only Authentication Active</span>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Citizen accounts at Bagula II Gram Panchayat are governed by an official OTP policy. You access your profile and applications using a verified single-use code sent to your email. Passwords are neither stored nor required.
+          </p>
+          <div className="pt-2">
+            <Button size="sm" onClick={() => navigate("/public/profile")}>
+              Return to My Profile
+            </Button>
+          </div>
+        </Card>
+      </Layout>
+    );
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPw) {
       toast.error("Please enter your current password.");
       return;
     }
-    if (newPw.length < 8) {
-      toast.error("New password must be at least 8 characters.");
+    const validation = validatePassword(newPw);
+    if (!validation.isValid) {
+      toast.error(validation.errorMessage || "New password does not meet security requirements.");
       return;
     }
-    if (newPw !== confirmPw) {
+    const match = checkPasswordMatch(newPw, confirmPw);
+    if (!match.matches) {
       toast.error("New password and confirm password do not match.");
       return;
     }
@@ -234,7 +267,22 @@ export function ChangePassword() {
               </button>
             </div>
           </Field>
-          <Button type="submit">Update Password</Button>
+          {Boolean(newPw || confirmPw) && (
+            <PasswordRequirementsIndicator
+              password={newPw}
+              confirmPassword={confirmPw}
+              showMatch={true}
+            />
+          )}
+          <Button
+            type="submit"
+            disabled={
+              !validatePassword(newPw).isValid ||
+              !checkPasswordMatch(newPw, confirmPw).matches
+            }
+          >
+            Update Password
+          </Button>
         </form>
       </Card>
     </Layout>

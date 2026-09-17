@@ -378,7 +378,7 @@ export function DependentCertificateForm({ unrestrictedDate = false }: { unrestr
       </div>
       <div style="margin-top:20px;text-align:center;font-size:11px;color:#333;line-height:1.5;border-top:2px solid #ddd;padding-top:8px">
         This certificate shall ordinarily remain valid up to six (6) months from the Date of Issue.<br />
-        To verify this certificate please visit <strong>https://deo-workflow-helper.lovable.app/verify</strong>
+        To verify this certificate please visit <strong>https://bagula2gp.lovable.app/verify</strong>
         ${reprintMode && reprintStamp ? `<div style="margin-top:6px;font-style:italic;color:#555">Reprinted from the Digital Administrative Register — ${reprintStamp.toLocaleString()}</div>` : ""}
       </div>
     `;
@@ -689,10 +689,10 @@ export default function DependentCertificate() {
       <Helmet>
         <title>Dependent Certificate — Bagula II Gram Panchayat</title>
         <meta name="description" content="Issue and manage staff dependent certificates for Bagula II Gram Panchayat employees, Hanskhali Block, Nadia." />
-        <link rel="canonical" href="https://deo-workflow-helper.lovable.app/dependent-certificate" />
+        <link rel="canonical" href="https://bagula2gp.lovable.app/dependent-certificate" />
         <meta property="og:title" content="Dependent Certificate — Bagula II Gram Panchayat" />
         <meta property="og:description" content="Issue and manage staff dependent certificates for Bagula II Gram Panchayat employees." />
-        <meta property="og:url" content="https://deo-workflow-helper.lovable.app/dependent-certificate" />
+        <meta property="og:url" content="https://bagula2gp.lovable.app/dependent-certificate" />
       </Helmet>
       <DependentCertificateForm unrestrictedDate />
     </>

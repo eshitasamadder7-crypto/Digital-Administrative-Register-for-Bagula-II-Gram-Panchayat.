@@ -386,10 +386,10 @@ export default function Index() {
       <Helmet>
         <title>Bagula II Gram Panchayat — Public Service Portal</title>
         <meta name="description" content="Bagula II Gram Panchayat, Hanskhali, Nadia — birth & death records, WBPMS certificates, MGNREGA jobs, PRD tax and warish (succession) services." />
-        <link rel="canonical" href="https://deo-workflow-helper.lovable.app/" />
+        <link rel="canonical" href="https://bagula2gp.lovable.app/" />
         <meta property="og:title" content="Bagula II Gram Panchayat — Public Service Portal" />
         <meta property="og:description" content="Official facilitation portal of Bagula II Gram Panchayat, Hanskhali Block, Nadia, West Bengal. Access birth & death registration, WBPMS certificates, MGNREGA and PRD tax services." />
-        <meta property="og:url" content="https://deo-workflow-helper.lovable.app/" />
+        <meta property="og:url" content="https://bagula2gp.lovable.app/" />
       </Helmet>
       {/* Gradient Background */}
       <div

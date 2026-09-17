@@ -32,6 +32,7 @@ import AdminPortalControls from "./pages/AdminPortalControls.tsx";
 import AdminProfilesDirectory from "./pages/AdminProfilesDirectory.tsx";
 import AdminDeoQuotas from "./pages/AdminDeoQuotas.tsx";
 import AdminSystemStatusPage from "./pages/AdminSystemStatusPage.tsx";
+import AdminAuthChecklistPage from "./pages/AdminAuthChecklistPage.tsx";
 import RequirePermission from "./components/RequirePermission";
 import RequireAdmin from "./components/RequireAdmin";
 import Verify from "./pages/Verify.tsx";
@@ -116,6 +117,7 @@ function AppLayout() {
           <Route path="/admin/notifications" element={<RequireAdmin><ErrorBoundary name="AdminNotifications"><AdminNotifications /></ErrorBoundary></RequireAdmin>} />
           <Route path="/admin/account" element={<RequireAdmin><ErrorBoundary name="AdminAccountSettings"><AdminAccountSettings /></ErrorBoundary></RequireAdmin>} />
           <Route path="/admin/system-status" element={<RequireAdmin><ErrorBoundary name="AdminSystemStatusPage"><AdminSystemStatusPage /></ErrorBoundary></RequireAdmin>} />
+          <Route path="/admin/auth-checklist" element={<RequireAdmin><RequirePermission permission="admins" superAdminOnly><ErrorBoundary name="AdminAuthChecklistPage"><AdminAuthChecklistPage /></ErrorBoundary></RequirePermission></RequireAdmin>} />
           <Route path="/admin/backups" element={<RequireAdmin><RequirePermission permission="backups" superAdminOnly><ErrorBoundary name="AdminBackups"><AdminBackups /></ErrorBoundary></RequirePermission></RequireAdmin>} />
           <Route path="/admin/*" element={<RequireAdmin><ErrorBoundary name="ComingSoon"><ComingSoon /></ErrorBoundary></RequireAdmin>} />
           <Route path="*" element={<NotFound />} />

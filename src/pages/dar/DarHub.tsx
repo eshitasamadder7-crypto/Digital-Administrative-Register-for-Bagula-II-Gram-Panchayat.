@@ -144,9 +144,9 @@ export default function DarHub() {
       <Helmet>
         <title>Digital Administrative Register — Bagula II Gram Panchayat</title>
         <meta name="description" content="Entry point to the Digital Administrative Register of Bagula II Gram Panchayat — choose the citizen, office or verification section to continue." />
-        <link rel="canonical" href="https://deo-workflow-helper.lovable.app/dar" />
+        <link rel="canonical" href="https://bagula2gp.lovable.app/dar" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://deo-workflow-helper.lovable.app/dar" />
+        <meta property="og:url" content="https://bagula2gp.lovable.app/dar" />
         <meta property="og:title" content="Digital Administrative Register — Bagula II Gram Panchayat" />
         <meta property="og:description" content="Choose the citizen, office or verification section of the Bagula II Gram Panchayat Digital Administrative Register." />
         <meta name="twitter:title" content="Digital Administrative Register — Bagula II Gram Panchayat" />

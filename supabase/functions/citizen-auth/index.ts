@@ -21,8 +21,10 @@ const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 function passwordProblem(pw: string): string | null {
   if (!pw || pw.length < 8) return "Password must be at least 8 characters.";
-  if (!/[A-Za-z]/.test(pw)) return "Password must contain a letter.";
-  if (!/[0-9]/.test(pw)) return "Password must contain a number.";
+  if (!/[A-Z]/.test(pw)) return "Password must contain at least 1 uppercase letter (A-Z).";
+  if (!/[a-z]/.test(pw)) return "Password must contain at least 1 lowercase letter (a-z).";
+  if (!/[0-9]/.test(pw)) return "Password must contain at least 1 number (0-9).";
+  if (!/[^A-Za-z0-9]/.test(pw)) return "Password must contain at least 1 special character (!@#$%^&* etc.).";
   return null;
 }
 

@@ -47,12 +47,19 @@ export default function RequireAdmin({ children }: { children: ReactNode }) {
 
       const email = session.user.email?.trim().toLowerCase() ?? null;
 
-      // Check roles (admin OR super_admin)
-      const { data: roles, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .in("role", ["admin", "super_admin", "deo", "monitoring_authority"]);
+      // Check roles and admin profile
+      const [{ data: roles, error }, { data: profile, error: profileErr }] = await Promise.all([
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .in("role", ["admin", "super_admin", "deo", "monitoring_authority"]),
+        supabase
+          .from("admin_profiles")
+          .select("status, must_change_password, created_at, archived_at, temp_password_issued_at, updated_at")
+          .eq("user_id", session.user.id)
+          .maybeSingle(),
+      ]);
 
       if (!active) return;
 
@@ -118,12 +125,6 @@ export default function RequireAdmin({ children }: { children: ReactNode }) {
       }
 
       // Check suspended status / temporary password
-      const { data: profile } = await supabase
-        .from("admin_profiles")
-        .select("status, must_change_password, created_at, archived_at, temp_password_issued_at, updated_at")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
-
       if (profile?.status === "suspended" || profile?.archived_at) {
         await supabase.auth.signOut();
         if (active) {

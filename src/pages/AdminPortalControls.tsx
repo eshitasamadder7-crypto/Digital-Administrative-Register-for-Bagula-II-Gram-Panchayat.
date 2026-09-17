@@ -9,6 +9,13 @@ import {
   saveSuperAdminControls,
   applyPartyTheme,
 } from "@/lib/appSettings";
+import {
+  type AuthenticationSettings,
+  DEFAULT_AUTH_SETTINGS,
+  loadAuthenticationSettings,
+  saveAuthenticationSettings,
+  validateAuthSettings,
+} from "@/lib/authenticationSettings";
 import { useAuthz } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -30,6 +37,9 @@ import {
   RotateCcw,
   Sparkles,
   Layers,
+  KeyRound,
+  Mail,
+  ShieldAlert,
 } from "lucide-react";
 
 export default function AdminPortalControls() {
@@ -37,10 +47,16 @@ export default function AdminPortalControls() {
   const [controls, setControls] = useState<SuperAdminConfigurableControls>(
     getCachedSuperAdminControls
   );
+  const [authSettings, setAuthSettings] = useState<AuthenticationSettings>(
+    DEFAULT_AUTH_SETTINGS
+  );
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setControls(getCachedSuperAdminControls());
+    loadAuthenticationSettings().then((loaded) => {
+      setAuthSettings(loaded);
+    });
   }, []);
 
   const handleThemeChange = (theme: PartyTheme) => {
@@ -51,6 +67,41 @@ export default function AdminPortalControls() {
     });
   };
 
+  const handleToggleCitizenPassword = (enabled: boolean) => {
+    setAuthSettings((prev) => {
+      const next = { ...prev, citizen_password_enabled: enabled };
+      if (!enabled) {
+        // Enforce dependency: Citizen Password OFF -> Forgot Password MUST be OFF
+        next.citizen_forgot_password_enabled = false;
+      }
+      return next;
+    });
+  };
+
+  const handleToggleCitizenForgotPassword = (enabled: boolean) => {
+    if (enabled && !authSettings.citizen_password_enabled) {
+      toast.error("Dependency Violation: Cannot enable Forgot Password while Citizen Password Authentication is disabled. Citizens authenticate via OTP.");
+      return;
+    }
+    setAuthSettings((prev) => ({ ...prev, citizen_forgot_password_enabled: enabled }));
+  };
+
+  const handleToggleCitizenOtp = (enabled: boolean) => {
+    if (!enabled && !authSettings.citizen_google_enabled && !authSettings.citizen_password_enabled) {
+      toast.error("Invalid Configuration: At least one Citizen authentication method must remain active.");
+      return;
+    }
+    setAuthSettings((prev) => ({ ...prev, citizen_email_otp_enabled: enabled }));
+  };
+
+  const handleToggleCitizenGoogle = (enabled: boolean) => {
+    if (!enabled && !authSettings.citizen_email_otp_enabled && !authSettings.citizen_password_enabled) {
+      toast.error("Invalid Configuration: At least one Citizen authentication method must remain active.");
+      return;
+    }
+    setAuthSettings((prev) => ({ ...prev, citizen_google_enabled: enabled }));
+  };
+
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
@@ -59,11 +110,24 @@ export default function AdminPortalControls() {
       return;
     }
 
+    const validation = validateAuthSettings(authSettings);
+    if (!validation.valid) {
+      toast.error(validation.error || "Invalid authentication settings");
+      return;
+    }
+
     setSaving(true);
     try {
-      const res = await saveSuperAdminControls(controls, authz.email);
-      if (res.success) {
-        toast.success("Super Admin controls saved and published successfully!");
+      const [resControls, resAuth] = await Promise.all([
+        saveSuperAdminControls(controls, authz.email),
+        saveAuthenticationSettings(authSettings, authz.email),
+      ]);
+
+      if (resControls.success && resAuth.success) {
+        toast.success("Super Admin controls & authentication policy published successfully!");
+      } else {
+        if (!resControls.success) toast.error(resControls.error || "Failed to save portal controls");
+        if (!resAuth.success) toast.error(resAuth.error || "Failed to save authentication policy");
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to save portal controls");
@@ -75,6 +139,7 @@ export default function AdminPortalControls() {
   const handleReset = () => {
     setControls(DEFAULT_SUPER_ADMIN_CONTROLS);
     applyPartyTheme(DEFAULT_SUPER_ADMIN_CONTROLS.partyTheme);
+    setAuthSettings(DEFAULT_AUTH_SETTINGS);
     toast.info("Reset to standard defaults. Click 'Save Changes' to persist.");
   };
 
@@ -266,12 +331,122 @@ export default function AdminPortalControls() {
           </div>
         </Card>
 
-        {/* 3. Phone Number & Privacy Visibility Controls */}
+        {/* 3. Authentication Governance & Citizen Access Policy */}
+        <Card className="p-6 space-y-4 border-l-4 border-l-primary">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              <span>3. Authentication Governance &amp; Citizen Access Policy</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Authoritative Super Admin control over public citizen authentication methods and credential governance. Enforces strict dependency: Citizen Password must be active before Forgot Password can be enabled.
+            </p>
+          </div>
+
+          <div className="space-y-4 pt-2 divide-y divide-border/60">
+            {/* Email OTP Authentication */}
+            <div className="flex items-center justify-between pt-2">
+              <div className="space-y-0.5 max-w-xl">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-primary" />
+                  <Label className="text-xs font-semibold text-foreground">
+                    Citizen Email OTP Authentication (Default &amp; Recommended)
+                  </Label>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Citizens authenticate by receiving a single-use 6-digit verification code sent to their registered email address. Eliminates static password vulnerabilities and forgot-password dead ends.
+                </p>
+              </div>
+              <Switch
+                checked={authSettings.citizen_email_otp_enabled}
+                onCheckedChange={handleToggleCitizenOtp}
+              />
+            </div>
+
+            {/* Google OAuth */}
+            <div className="flex items-center justify-between pt-3">
+              <div className="space-y-0.5 max-w-xl">
+                <div className="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 48 48" aria-hidden="true">
+                    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/>
+                    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+                    <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8L6.2 33C9.5 39.6 16.2 44 24 44z"/>
+                    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.6l6.2 5.2C40.9 35.6 44 30.3 44 24c0-1.2-.1-2.3-.4-3.5z"/>
+                  </svg>
+                  <Label className="text-xs font-semibold text-foreground">
+                    Citizen Google OAuth Sign-in
+                  </Label>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Allow citizens with verified Google accounts to sign in directly without typing credentials or waiting for email codes.
+                </p>
+              </div>
+              <Switch
+                checked={authSettings.citizen_google_enabled}
+                onCheckedChange={handleToggleCitizenGoogle}
+              />
+            </div>
+
+            {/* Static Password Authentication */}
+            <div className="flex items-center justify-between pt-3">
+              <div className="space-y-0.5 max-w-xl">
+                <div className="flex items-center gap-2">
+                  <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Label className="text-xs font-semibold text-foreground">
+                    Citizen Static Password Authentication
+                  </Label>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Allow citizens to log in with a citizen ID / mobile number and static password. (Disabled by default: OTP authentication is the standard citizen policy).
+                </p>
+              </div>
+              <Switch
+                checked={authSettings.citizen_password_enabled}
+                onCheckedChange={handleToggleCitizenPassword}
+              />
+            </div>
+
+            {/* Citizen Forgot Password Recovery (Dependent) */}
+            <div className="flex items-center justify-between pt-3">
+              <div className="space-y-0.5 max-w-xl">
+                <div className="flex items-center gap-2">
+                  <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Label className={`text-xs font-semibold ${!authSettings.citizen_password_enabled ? "text-muted-foreground" : "text-foreground"}`}>
+                    Citizen Password Recovery ("Forgot Password" Flow)
+                  </Label>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Controls whether "Forgot Password" links and recovery actions are exposed in the Citizen Login screen.
+                  {!authSettings.citizen_password_enabled && (
+                    <span className="block font-medium text-amber-600 mt-1">
+                      ⚠️ Locked OFF: Citizen Password Authentication is disabled. Citizens authenticate truthfully via OTP; password recovery is not applicable.
+                    </span>
+                  )}
+                </p>
+              </div>
+              <Switch
+                checked={authSettings.citizen_forgot_password_enabled}
+                disabled={!authSettings.citizen_password_enabled}
+                onCheckedChange={handleToggleCitizenForgotPassword}
+              />
+            </div>
+          </div>
+
+          <div className="mt-3 p-3 rounded-lg bg-muted/40 border border-border/60 flex items-start gap-2.5 text-xs text-muted-foreground">
+            <ShieldAlert className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            <div>
+              <span className="font-semibold text-foreground">Official Staff &amp; DEO Governance Notice:</span>{" "}
+              DEO, Auditor, and Panchayat Staff accounts maintain dedicated official credentials and administrative session verification. Modifying citizen access policies does not compromise or alter official staff authentication routes.
+            </div>
+          </div>
+        </Card>
+
+        {/* 4. Phone Number & Privacy Visibility Controls */}
         <Card className="p-6 space-y-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm font-bold text-foreground">
               <Smartphone className="h-4 w-4 text-primary" />
-              <span>3. Phone Number &amp; Contact Visibility Controls</span>
+              <span>4. Phone Number &amp; Contact Visibility Controls</span>
             </div>
             <p className="text-xs text-muted-foreground">
               Enforce citizen data protection standards under DPDP Rules by controlling where applicant mobile numbers are shown or masked.
@@ -311,12 +486,12 @@ export default function AdminPortalControls() {
           </div>
         </Card>
 
-        {/* 4. Form Fields Enable / Disable Controls */}
+        {/* 5. Form Fields Enable / Disable Controls */}
         <Card className="p-6 space-y-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm font-bold text-foreground">
               <FileSpreadsheet className="h-4 w-4 text-primary" />
-              <span>4. Application Form Fields Configuration</span>
+              <span>5. Application Form Fields Configuration</span>
             </div>
             <p className="text-xs text-muted-foreground">
               Enable or disable optional administrative data collection fields in the Citizen and DEO Application Wizard.

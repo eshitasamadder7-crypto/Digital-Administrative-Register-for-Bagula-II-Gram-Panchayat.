@@ -24,19 +24,19 @@ export default function GovFooter() {
             </div>
           </div>
           <div>
-            <h3 className="font-bold mb-3 text-base" style={{ color: "hsl(30 100% 60%)" }}>Disclaimer</h3>
+            <h3 className="font-bold mb-3 text-base" style={{ color: "hsl(30 100% 60%)" }}>Official Facilitation</h3>
             <p className="opacity-70 text-xs leading-relaxed">
-              Public facilitation platform. Certificates generated here are draft-based.
-              No personal data is stored on server — all processing happens locally in your browser.
+              Official citizen service facilitation platform of Bagula II Gram Panchayat.
+              Applications are securely transmitted and processed through verified administrative workflows.
             </p>
             <p className="opacity-90 text-xs leading-relaxed mt-2 font-semibold">
-              For official verification, please contact the Gram Panchayat office.
+              For official enquiries and physical document submission, visit the Gram Panchayat office.
             </p>
           </div>
         </div>
         <div className="border-t border-white/20 mt-6 pt-4">
           <p className="text-xs opacity-70 leading-relaxed text-center max-w-4xl mx-auto mb-3">
-            <strong>Disclaimer:</strong> This website serves as a public facilitation platform of Bagula II Gram Panchayat. External services are governed by respective Government portals. Certificates generated here are draft-based and subject to official verification. No user data is stored on server; all processing occurs locally. Use of this platform must comply with applicable laws of India.
+            <strong>Disclaimer:</strong> This website serves as the official public citizen service facilitation platform of Bagula II Gram Panchayat, Hanskhali Block, Nadia. External government services are governed by their respective departmental portals. All certificates issued through this portal are subject to statutory verification. Data submitted is securely managed under applicable administrative standards.
           </p>
           <p className="text-center text-xs opacity-60">
             © {new Date().getFullYear()} Bagula II Gram Panchayat. All rights reserved.

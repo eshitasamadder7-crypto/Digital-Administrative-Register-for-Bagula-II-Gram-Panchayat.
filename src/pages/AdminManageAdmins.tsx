@@ -35,6 +35,8 @@ import {
 } from "@/components/ui/select";
 import { handleAdminDbError, type SchemaErrorInfo } from "@/lib/adminDatabaseErrorHandler";
 import { SchemaErrorAlert } from "@/components/admin/SchemaErrorAlert";
+import { validatePassword } from "@/lib/passwordPolicy";
+import { PasswordRequirementsIndicator } from "@/components/PasswordRequirementsIndicator";
 
 const PROTECTED_EMAILS = new Set(["bagula2nogp111@gmail.com", "nitish374482@gmail.com"]);
 
@@ -197,6 +199,13 @@ export default function AdminManageAdmins() {
   };
 
   const createAccount = async () => {
+    if (form.allowed_login_method !== "google") {
+      const validation = validatePassword(form.temp_password);
+      if (!validation.isValid) {
+        toast.error(validation.errorMessage || "Temporary password does not meet security requirements.");
+        return;
+      }
+    }
     setBusy(true);
     try {
       await callOfficeAccounts("create", form);
@@ -418,7 +427,13 @@ export default function AdminManageAdmins() {
         <BackButton fallbackUrl="/admin/dashboard" label="🏠 Dashboard" className="-ml-2 text-xs" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h1 className="text-xl font-bold">Office Credentials</h1>
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button asChild variant="outline" size="sm" className="h-8 text-xs font-semibold gap-1.5 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 shadow-xs">
+              <Link to="/admin/auth-checklist">
+                <ShieldCheck size={13} />
+                <span>📋 Auth Verification Matrix</span>
+              </Link>
+            </Button>
             <Button asChild variant="outline" size="sm" className="h-8 text-xs font-semibold gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-xs">
               <Link to="/admin/deo-quotas">
                 <ShieldCheck size={13} />
@@ -500,15 +515,29 @@ export default function AdminManageAdmins() {
               </Select>
             </div>
             {form.allowed_login_method !== "google" && (
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wide text-muted-foreground" htmlFor="of-pw">Temporary password</label>
-                <Input id="of-pw" value={form.temp_password} onChange={(e) => setForm({ ...form, temp_password: e.target.value })} placeholder="At least 8 chars, letters + numbers" />
-                <p className="text-[10px] text-muted-foreground">The officer must change this at first login.</p>
+              <div className="space-y-2 md:col-span-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase tracking-wide text-muted-foreground" htmlFor="of-pw">Temporary password</label>
+                  <Input id="of-pw" value={form.temp_password} onChange={(e) => setForm({ ...form, temp_password: e.target.value })} placeholder="8+ chars, upper + lower + number + special" />
+                  <p className="text-[10px] text-muted-foreground">The officer will be required to change this at first login.</p>
+                </div>
+                {Boolean(form.temp_password) && (
+                  <PasswordRequirementsIndicator password={form.temp_password} />
+                )}
               </div>
             )}
           </div>
           <PermissionSummary role={form.role} />
-          <Button onClick={createAccount} disabled={busy}>Create office account</Button>
+          <Button
+            onClick={createAccount}
+            disabled={
+              busy ||
+              (form.allowed_login_method !== "google" &&
+                !validatePassword(form.temp_password).isValid)
+            }
+          >
+            Create office account
+          </Button>
         </section>
 
         {loading ? (

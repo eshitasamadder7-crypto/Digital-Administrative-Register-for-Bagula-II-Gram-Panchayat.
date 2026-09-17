@@ -104,3 +104,89 @@ export async function loginCitizen(identifier: string, password: string) {
 export async function logoutCitizen() {
   await supabase.auth.signOut();
 }
+
+/**
+ * Send OTP to citizen's email using the authoritative Supabase Auth backend.
+ * Enforces pure OTP delivery with NO magic links and NO redirect parameters.
+ */
+export async function sendCitizenOtp(email: string) {
+  const normEmail = email.trim().toLowerCase();
+  if (!normEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normEmail)) {
+    throw new Error("Please enter a valid email address.");
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: normEmail,
+    options: {
+      shouldCreateUser: true,
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message || "Failed to send OTP to email. Please try again.");
+  }
+  return { success: true, email: normEmail };
+}
+
+/**
+ * Verifies the 6-digit OTP code entered by the citizen.
+ * Strictly requires the OTP to be verified against the backend before session establishment.
+ */
+export async function verifyCitizenOtp(email: string, token: string) {
+  const normEmail = email.trim().toLowerCase();
+  const cleanToken = token.trim();
+  if (!cleanToken || cleanToken.length < 6) {
+    throw new Error("Please enter the 6-digit OTP code.");
+  }
+
+  const { data, error } = await supabase.auth.verifyOtp({
+    email: normEmail,
+    token: cleanToken,
+    type: "email",
+  });
+
+  if (error) {
+    throw new Error(error.message || "Invalid or expired OTP code.");
+  }
+
+  if (!data.user) {
+    throw new Error("Verification succeeded but no authenticated user returned.");
+  }
+
+  // Ensure citizen profile exists so portal access is smooth
+  await ensureCitizenProfile(data.user);
+
+  return data;
+}
+
+export async function ensureCitizenProfile(user: { id: string; email?: string | null }) {
+  try {
+    const { data: profile } = await supabase
+      .from("citizen_profiles")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!profile) {
+      const email = user.email?.toLowerCase() ?? "";
+      const baseName = email ? email.split("@")[0].replace(/[._]/g, " ") : "Citizen";
+      const parts = baseName.split(" ");
+      const firstName = parts[0] || "Citizen";
+      const lastName = parts.slice(1).join(" ") || "Resident";
+
+      await supabase.from("citizen_profiles").insert({
+        user_id: user.id,
+        first_name: firstName,
+        last_name: lastName,
+        email: email || null,
+        email_verified: true,
+      } as any);
+
+      await supabase.from("citizen_account_health").insert({
+        user_id: user.id,
+      } as any);
+    }
+  } catch (err) {
+    console.error("ensureCitizenProfile error:", err);
+  }
+}

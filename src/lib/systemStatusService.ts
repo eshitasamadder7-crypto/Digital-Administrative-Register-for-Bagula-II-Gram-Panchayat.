@@ -114,7 +114,15 @@ export async function recordAuthIncident(incident: {
 
 // Fetch database connection health and response latency
 export async function fetchDatabaseHealth(): Promise<DatabaseHealthInfo> {
-  const host = "iyyrjpzfjsslqibibpsx.supabase.co";
+  const host = (() => {
+    try {
+      const raw = import.meta.env.VITE_SUPABASE_URL;
+      if (raw) return new URL(raw).host;
+    } catch {
+      // fallback
+    }
+    return "supabase.co";
+  })();
   const start = performance.now();
   let reachableTables = 0;
   const tablesToCheck = ["master_data", "activity_logs", "admin_profiles", "backup_jobs"];

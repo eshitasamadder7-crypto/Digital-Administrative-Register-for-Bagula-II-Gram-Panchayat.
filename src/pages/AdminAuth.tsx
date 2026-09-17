@@ -31,6 +31,14 @@ async function consumeHashTokens(): Promise<boolean> {
     ? window.location.hash.slice(1)
     : window.location.hash;
   const params = new URLSearchParams(hash);
+
+  // Strictly reject email/magiclink URL tokens to enforce manual OTP entry
+  const type = params.get("type");
+  if (type === "email" || type === "magiclink" || type === "signup") {
+    window.history.replaceState({}, "", window.location.pathname + window.location.search);
+    return false;
+  }
+
   const access_token = params.get("access_token");
   const refresh_token = params.get("refresh_token");
   if (!access_token || !refresh_token) return false;
@@ -165,6 +173,8 @@ export default function AdminAuth() {
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpCountdown, setOtpCountdown] = useState(0);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  const MAX_OTP_ATTEMPTS = 5;
 
   useEffect(() => {
     if (otpCountdown <= 0) return;
@@ -369,21 +379,23 @@ export default function AdminAuth() {
     }
     setBusy(true);
     try {
-      const redirectUri =
-        window.location.origin +
-        "/admin" +
-        (nextPath() ? `?next=${encodeURIComponent(nextPath()!)}` : "");
+      const isDesignatedAdmin =
+        SUPER_ADMIN_CRED_EMAILS.includes(targetEmail) ||
+        ADMIN_EMAILS.includes(targetEmail);
 
+      // Strict OTP sending: NO emailRedirectTo parameter ensures purely numeric OTP is dispatched
       const { error } = await supabase.auth.signInWithOtp({
         email: targetEmail,
         options: {
-          emailRedirectTo: redirectUri,
+          shouldCreateUser: isDesignatedAdmin,
         },
       });
       if (error) {
         throw error;
       }
       setOtpSent(true);
+      setOtpCode("");
+      setOtpAttempts(0);
       setOtpCountdown(60);
       toast.success(`One-Time Code (OTP) sent to ${targetEmail}`);
       recordAuthIncident({
@@ -403,6 +415,12 @@ export default function AdminAuth() {
     e.preventDefault();
     const targetEmail = (otpEmail || email).trim().toLowerCase();
     const code = otpCode.trim();
+
+    if (otpAttempts >= MAX_OTP_ATTEMPTS) {
+      toast.error("Maximum verification attempts reached. Please request a new OTP.");
+      return;
+    }
+
     if (!code || code.length < 6) {
       toast.error("Please enter the 6-digit OTP code sent to your email.");
       return;
@@ -415,13 +433,18 @@ export default function AdminAuth() {
         type: "email",
       });
       if (error) {
+        const nextAttempts = otpAttempts + 1;
+        setOtpAttempts(nextAttempts);
         recordAuthIncident({
           action_type: "auth.otp_failed",
           actor_email: targetEmail,
-          reason: `OTP verification failed: ${error.message}`,
+          reason: `OTP verification failed: ${error.message} (attempt ${nextAttempts}/${MAX_OTP_ATTEMPTS})`,
           severity: "warning",
         });
-        throw new Error(error.message || "Invalid or expired OTP code.");
+        if (nextAttempts >= MAX_OTP_ATTEMPTS) {
+          throw new Error("Too many invalid attempts. For security, please request a new OTP code.");
+        }
+        throw new Error(error.message.includes("expired") ? "The OTP code has expired. Please request a new one." : `Invalid OTP code. (${MAX_OTP_ATTEMPTS - nextAttempts} attempts remaining)`);
       }
       const user = data.user;
       if (!user) throw new Error("Verification succeeded but no authenticated user returned.");
@@ -644,10 +667,18 @@ export default function AdminAuth() {
                   </button>
                 </div>
 
-                <div className="space-y-1">
-                  <label htmlFor="otp-code" className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                    6-Digit One-Time Code
-                  </label>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="otp-code" className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                      6-Digit One-Time Code
+                    </label>
+                    <span className="text-[10px] text-muted-foreground">
+                      Attempts: {otpAttempts}/{MAX_OTP_ATTEMPTS}
+                    </span>
+                  </div>
+                  <p className="text-xs font-medium text-foreground">
+                    Enter the OTP sent to your email.
+                  </p>
                   <Input
                     id="otp-code"
                     type="text"
@@ -655,6 +686,7 @@ export default function AdminAuth() {
                     pattern="[0-9]*"
                     maxLength={6}
                     autoFocus
+                    disabled={otpAttempts >= MAX_OTP_ATTEMPTS}
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
                     placeholder="000000"
@@ -663,8 +695,13 @@ export default function AdminAuth() {
                   />
                 </div>
 
-                <Button type="submit" variant="default" className="w-full" disabled={busy || otpCode.length < 6}>
-                  {busy ? "Verifying..." : "Verify & Sign In"}
+                <Button
+                  type="submit"
+                  variant="default"
+                  className="w-full"
+                  disabled={busy || otpCode.length < 6 || otpAttempts >= MAX_OTP_ATTEMPTS}
+                >
+                  {busy ? "Verifying OTP..." : "Verify OTP"}
                 </Button>
 
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">

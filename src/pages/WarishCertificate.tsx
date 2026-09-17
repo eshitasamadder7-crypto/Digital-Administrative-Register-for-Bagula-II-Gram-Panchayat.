@@ -1158,7 +1158,7 @@ function WarishCertificateForm() {
                       <div style={{ background: `linear-gradient(to right, #FF9933 33.33%, white 33.33% 66.66%, #2E7D32 66.66%)`, height: "4px", marginTop: "20px" }} />
                       <div style={{ marginTop: "10px", textAlign: "center", fontSize: "10px", color: "#333", lineHeight: 1.5 }}>
                         This certificate shall ordinarily remain valid up to six (6) months from the Date of Issue.<br />
-                        To verify this certificate please visit <strong>https://deo-workflow-helper.lovable.app/verify</strong>
+                        To verify this certificate please visit <strong>https://bagula2gp.lovable.app/verify</strong>
                         {reprintMode && reprintStamp && (
                           <div style={{ marginTop: "6px", fontStyle: "italic", color: "#555" }}>
                             Reprinted from the Digital Administrative Register — {reprintStamp.toLocaleString()}
@@ -1185,10 +1185,10 @@ export default function WarishCertificate() {
       <Helmet>
         <title>Warish Certificate — Bagula II Gram Panchayat</title>
         <meta name="description" content="Apply for and issue Warish Certificates (successor / warish details) from Bagula II Gram Panchayat, Hanskhali Block, Nadia, West Bengal." />
-        <link rel="canonical" href="https://deo-workflow-helper.lovable.app/warish-certificate" />
+        <link rel="canonical" href="https://bagula2gp.lovable.app/warish-certificate" />
         <meta property="og:title" content="Warish Certificate — Bagula II Gram Panchayat" />
         <meta property="og:description" content="Apply for and issue Warish Certificates from Bagula II Gram Panchayat." />
-        <meta property="og:url" content="https://deo-workflow-helper.lovable.app/warish-certificate" />
+        <meta property="og:url" content="https://bagula2gp.lovable.app/warish-certificate" />
       </Helmet>
       <WarishCertificateForm />
     </>

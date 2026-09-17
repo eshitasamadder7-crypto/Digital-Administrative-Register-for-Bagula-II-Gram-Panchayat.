@@ -37,13 +37,11 @@ function loadPrefs(): Prefs {
   }
 }
 
+import { validatePassword, checkPasswordMatch } from "@/lib/passwordPolicy";
+import { PasswordRequirementsIndicator } from "@/components/PasswordRequirementsIndicator";
+
 export function isValidAdminPassword(pw: string) {
-  if (pw.length < 8) return false;
-  if (!/[A-Z]/.test(pw)) return false;
-  if (!/[a-z]/.test(pw)) return false;
-  if (!/[0-9]/.test(pw)) return false;
-  if (!/[^A-Za-z0-9]/.test(pw)) return false;
-  return true;
+  return validatePassword(pw).isValid;
 }
 
 export default function AdminAccountSettings() {
@@ -54,7 +52,9 @@ export default function AdminAccountSettings() {
   const [displayName, setDisplayName] = useState("");
   const [mobile, setMobile] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [prefs, setPrefs] = useState<Prefs>(loadPrefs);
   const [employeeId, setEmployeeId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -156,10 +156,14 @@ export default function AdminAccountSettings() {
   };
 
   const changePassword = async () => {
-    if (!isValidAdminPassword(newPassword)) {
-      toast.error(
-        "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.",
-      );
+    const validation = validatePassword(newPassword);
+    if (!validation.isValid) {
+      toast.error(validation.errorMessage || "Password does not meet the security policy.");
+      return;
+    }
+    const match = checkPasswordMatch(newPassword, confirmPassword);
+    if (!match.matches) {
+      toast.error("The new password and confirmation password do not match.");
       return;
     }
     setBusy(true);
@@ -168,7 +172,8 @@ export default function AdminAccountSettings() {
       if (error) throw error;
       await logActivity({ action_type: "admin.password.change" });
       setNewPassword("");
-      toast.success("Password updated");
+      setConfirmPassword("");
+      toast.success("Password updated successfully");
     } catch (e: any) {
       toast.error("Failed to update password. Please try again.");
     } finally {
@@ -307,8 +312,49 @@ export default function AdminAccountSettings() {
               </button>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button size="sm" onClick={changePassword} disabled={busy || !newPassword}>
+
+          <div className="space-y-1">
+            <Label className="text-xs" htmlFor="confirmPassword">
+              Confirm new password
+            </Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                type={showConfirmPassword ? "text" : "password"}
+                autoComplete="new-password"
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground"
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          {Boolean(newPassword || confirmPassword) && (
+            <PasswordRequirementsIndicator
+              password={newPassword}
+              confirmPassword={confirmPassword}
+              showMatch={true}
+            />
+          )}
+
+          <div className="flex gap-2 pt-1">
+            <Button
+              size="sm"
+              onClick={changePassword}
+              disabled={
+                busy ||
+                !validatePassword(newPassword).isValid ||
+                !checkPasswordMatch(newPassword, confirmPassword).matches
+              }
+            >
               Update password
             </Button>
             <Button size="sm" variant="outline" onClick={sendReset} disabled={busy}>

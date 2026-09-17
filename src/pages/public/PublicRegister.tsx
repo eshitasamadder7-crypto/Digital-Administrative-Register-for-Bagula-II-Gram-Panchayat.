@@ -10,12 +10,15 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  ArrowLeft, ArrowRight, CheckCircle2, Copy, Eye, EyeOff, Info, Loader2, MapPin, RefreshCw,
+  ArrowLeft, ArrowRight, CheckCircle2, Copy, Eye, EyeOff, Info, Loader2, MapPin, RefreshCw, ShieldCheck,
 } from "lucide-react";
 import { JURISDICTION, POST_OFFICES, VILLAGES, resolvePostOffice } from "@/lib/masterData";
 import { registerCitizen } from "@/modules/citizen/citizenAuth";
 import { toast } from "@/hooks/use-toast";
 import PublicShell from "./PublicShell";
+import { validatePassword, checkPasswordMatch } from "@/lib/passwordPolicy";
+import { PasswordRequirementsIndicator } from "@/components/PasswordRequirementsIndicator";
+import { useAuthenticationSettings } from "@/lib/authenticationSettings";
 
 const steps = [
   { title: "Personal Info", hint: "Identity details" },
@@ -80,6 +83,7 @@ function passwordScore(pw: string) {
 }
 
 export default function PublicRegister() {
+  const { effectiveCitizenMethods } = useAuthenticationSettings();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initialForm);
   const [poAuto, setPoAuto] = useState(false);
@@ -91,6 +95,16 @@ export default function PublicRegister() {
   const [submitting, setSubmitting] = useState(false);
   const [citizenId, setCitizenId] = useState("");
   const navigate = useNavigate();
+
+  const steps = useMemo(() => [
+    { title: "Personal Info", hint: "Identity details" },
+    { title: "Address", hint: "Village & Post Office" },
+    { title: "Contact", hint: "Mobile & Email" },
+    effectiveCitizenMethods.allowPassword
+      ? { title: "Credentials", hint: "Password & Declaration" }
+      : { title: "Security", hint: "OTP Policy & Declaration" },
+    { title: "Done", hint: "Your Citizen ID" },
+  ], [effectiveCitizenMethods.allowPassword]);
 
   const set = (key: string) => (v: string) => setForm((f) => ({ ...f, [key]: v }));
   const onInput = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => set(key)(e.target.value);
@@ -125,10 +139,11 @@ export default function PublicRegister() {
         return "Please enter a valid email address.";
     }
     if (step === 3) {
-      if (form.password.length < 8) return "Password must be at least 8 characters.";
-      if (!/[A-Za-z]/.test(form.password) || !/[0-9]/.test(form.password))
-        return "Password must contain both letters and numbers.";
-      if (form.password !== form.confirm_password) return "The two passwords do not match.";
+      if (effectiveCitizenMethods.allowPassword) {
+        const validation = validatePassword(form.password);
+        if (!validation.isValid) return validation.errorMessage;
+        if (form.password !== form.confirm_password) return "The two passwords do not match.";
+      }
       if (captchaInput.trim().toUpperCase() !== captcha) return "The security code does not match.";
       if (!declared) return "Please confirm the declaration to continue.";
     }
@@ -138,6 +153,10 @@ export default function PublicRegister() {
   const submit = async () => {
     setSubmitting(true);
     try {
+      const finalPassword = effectiveCitizenMethods.allowPassword
+        ? form.password
+        : `BGL2-OTP-${window.crypto.randomUUID()}`;
+
       const { citizen_id } = await registerCitizen({
         prefix: form.prefix, first_name: form.first_name, middle_name: form.middle_name,
         last_name: form.last_name, guardian_name: form.guardian_name, mother_name: form.mother_name,
@@ -145,7 +164,7 @@ export default function PublicRegister() {
         occupation: form.occupation, village: form.village, post_office: form.post_office,
         pin_code: form.pin_code, mobile: form.mobile, alternate_mobile: form.alternate_mobile,
         email: form.email, epic_no: form.epic_no, pan_no: form.pan_no,
-        aadhaar_last4: form.aadhaar_last4, password: form.password,
+        aadhaar_last4: form.aadhaar_last4, password: finalPassword,
       });
       setCitizenId(citizen_id);
       setStep(4);
@@ -176,11 +195,11 @@ export default function PublicRegister() {
       <Helmet>
         <title>Citizen Registration — Bagula II Gram Panchayat</title>
         <meta name="description" content="Create a citizen account on the Bagula II Gram Panchayat Public Citizen Portal." />
-        <link rel="canonical" href="https://deo-workflow-helper.lovable.app/public/register" />
+        <link rel="canonical" href="https://bagula2gp.lovable.app/public/register" />
         <meta property="og:title" content="Citizen Registration — Bagula II Gram Panchayat" />
         <meta property="og:description" content="Register in a few simple steps to apply for and track Gram Panchayat certificates online." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://deo-workflow-helper.lovable.app/public/register" />
+        <meta property="og:url" content="https://bagula2gp.lovable.app/public/register" />
       </Helmet>
 
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
@@ -407,65 +426,78 @@ export default function PublicRegister() {
 
           {step === 3 && (
             <>
-              <h2 className="font-semibold">Login Credentials & Declaration / লগইন তথ্য ও ঘোষণা</h2>
-              <p className="text-xs text-muted-foreground">
-                You will be able to sign in with your Mobile Number, Citizen ID or Email.
-              </p>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Field label="Password" required htmlFor="reg-password">
-                  <div className="relative">
-                    <Input
-                      id="reg-password"
-                      type={showPass ? "text" : "password"}
-                      placeholder="At least 8 characters"
-                      className="pr-11"
-                      autoComplete="new-password"
-                      value={form.password}
-                      onChange={onInput("password")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPass((v) => !v)}
-                      aria-label={showPass ? "Hide password" : "Show password"}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
+              {effectiveCitizenMethods.allowPassword ? (
+                <>
+                  <h2 className="font-semibold">Login Credentials &amp; Declaration / লগইন তথ্য ও ঘোষণা</h2>
+                  <p className="text-xs text-muted-foreground">
+                    You will be able to sign in with your Mobile Number, Citizen ID or Email.
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <Field label="Password" required htmlFor="reg-password">
+                      <div className="relative">
+                        <Input
+                          id="reg-password"
+                          type={showPass ? "text" : "password"}
+                          placeholder="At least 8 characters"
+                          className="pr-11"
+                          autoComplete="new-password"
+                          value={form.password}
+                          onChange={onInput("password")}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPass((v) => !v)}
+                          aria-label={showPass ? "Hide password" : "Show password"}
+                          className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </Field>
+                    <Field label="Confirm Password" required htmlFor="reg-confirm-password">
+                      <div className="relative">
+                        <Input
+                          id="reg-confirm-password"
+                          type={showConfirmPass ? "text" : "password"}
+                          placeholder="Re-enter password"
+                          className="pr-11"
+                          autoComplete="new-password"
+                          value={form.confirm_password}
+                          onChange={onInput("confirm_password")}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPass((v) => !v)}
+                          aria-label={showConfirmPass ? "Hide confirm password" : "Show confirm password"}
+                          className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showConfirmPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </Field>
                   </div>
-                </Field>
-                <Field label="Confirm Password" required htmlFor="reg-confirm-password">
-                  <div className="relative">
-                    <Input
-                      id="reg-confirm-password"
-                      type={showConfirmPass ? "text" : "password"}
-                      placeholder="Re-enter password"
-                      className="pr-11"
-                      autoComplete="new-password"
-                      value={form.confirm_password}
-                      onChange={onInput("confirm_password")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPass((v) => !v)}
-                      aria-label={showConfirmPass ? "Hide confirm password" : "Show confirm password"}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showConfirmPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </Field>
-              </div>
 
-              {form.password && (
-                <div className="space-y-1">
-                  <div className="h-1.5 w-full rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all"
-                      style={{ width: `${(score / 4) * 100}%` }}
+                  {Boolean(form.password || form.confirm_password) && (
+                    <PasswordRequirementsIndicator
+                      password={form.password}
+                      confirmPassword={form.confirm_password}
+                      showMatch={true}
                     />
+                  )}
+                </>
+              ) : (
+                <>
+                  <h2 className="font-semibold">Security Policy &amp; Declaration / নিরাপত্তা ও ঘোষণা</h2>
+                  <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                      <ShieldCheck className="h-5 w-5" />
+                      <span>Password-Free One-Time Passcode (OTP) Policy</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Bagula II Gram Panchayat operates an official OTP security model for citizens. Once registered, you will log in with your Citizen ID, Mobile number, or Email using an instantaneous single-use verification code sent to your device. You do not need to create or remember a password.
+                    </p>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">Password strength: {strengthLabel}</p>
-                </div>
+                </>
               )}
 
               <div className="space-y-1.5">

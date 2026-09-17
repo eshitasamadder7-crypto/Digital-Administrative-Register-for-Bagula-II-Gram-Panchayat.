@@ -9,10 +9,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   User, FilePlus2, Award, Search, ShieldCheck, Languages,
-  AlertCircle, CheckCircle2, HelpCircle, Loader2,
+  AlertCircle, CheckCircle2, HelpCircle, Loader2, Phone, Mail as MailIcon, MapPin, X
 } from "lucide-react";
 import { toast } from "sonner";
-import { comingSoon } from "./PublicShell";
 import { listCitizenApplications, type CitizenApplicationRow } from "@/modules/application/api";
 import { logoutCitizen } from "@/modules/citizen/citizenAuth";
 import { useCitizenSession } from "@/modules/citizen/useCitizenSession";
@@ -22,6 +21,8 @@ import { NotificationCenter } from "@/components/NotificationCenter";
 import { useCitizenApplicationStatusWatcher } from "@/modules/citizen/applicationStatusWatcher";
 import { StatusNotificationBanner } from "@/components/citizen/StatusNotificationBanner";
 import { StatusNotificationBadge } from "@/components/citizen/StatusNotificationBadge";
+import { useAuthenticationSettings } from "@/lib/authenticationSettings";
+import { JURISDICTION } from "@/lib/masterData";
 
 const KIND_LABEL: Record<string, string> = {
   warish: "📜 Warish Certificate",
@@ -50,6 +51,7 @@ function Section({ title, children, action }: { title: string; children: React.R
 export default function PublicDashboard() {
   const navigate = useNavigate();
   const session = useCitizenSession();
+  const { effectiveCitizenMethods } = useAuthenticationSettings();
   const [rows, setRows] = useState<CitizenApplicationRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -96,6 +98,7 @@ export default function PublicDashboard() {
         style={{ background: "linear-gradient(160deg, hsl(30 100% 95%) 0%, hsl(0 0% 100%) 50%, hsl(140 40% 95%) 100%)" }}
       />
 
+      <div className="gov-tricolor-top" />
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/75 border-b border-border/50">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link to="/" className="flex items-center gap-2 min-w-0">
@@ -121,7 +124,9 @@ export default function PublicDashboard() {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => navigate("/public/profile")}>👤 My Profile</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/public/profile/edit")}>✏️ Edit Profile</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/public/profile/password")}>🔑 Change Password</DropdownMenuItem>
+                {effectiveCitizenMethods.allowPassword && (
+                  <DropdownMenuItem onClick={() => navigate("/public/profile/password")}>🔑 Change Password</DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => navigate("/public/profile/language")}>🌐 Language Preference</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowSignOutDialog(true)}>🚪 Sign out</DropdownMenuItem>
@@ -314,18 +319,55 @@ export default function PublicDashboard() {
         </Section>
 
         <Section title="ℹ️ Help Centre (সহায়তা কেন্দ্র)">
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { title: "❓ FAQ", key: "FAQ" },
-              { title: "📞 Contact GP", key: "Contact GP" },
-              { title: "🤝 Support", key: "Support" },
-            ].map((h) => (
-              <button key={h.key} type="button" onClick={() => comingSoon(h.key)}
-                className="rounded-2xl border bg-card p-4 text-center hover:shadow-md transition">
-                <HelpCircle size={18} className="mx-auto text-primary mb-1.5" />
-                <p className="text-sm font-medium">{h.title}</p>
-              </button>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* FAQ Card */}
+            <div className="rounded-2xl border bg-card p-4 space-y-2 shadow-sm">
+              <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                <HelpCircle size={18} />
+                <span>Frequently Asked (FAQ)</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Learn how applications are verified by Gram Panchayat officials, how to track status, and how digital certificates are authenticated.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs"
+                onClick={() => navigate("/public/track")}
+              >
+                Track Status &amp; Guidance →
+              </Button>
+            </div>
+
+            {/* Contact GP Card */}
+            <div className="rounded-2xl border bg-card p-4 space-y-2 shadow-sm">
+              <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                <Phone size={18} />
+                <span>Contact GP Office</span>
+              </div>
+              <div className="text-xs text-muted-foreground space-y-1">
+                <p className="font-medium text-foreground">Bagula II Gram Panchayat</p>
+                <p>📞 +91 3473 272 222</p>
+                <p>✉️ {JURISDICTION.email || "bagula2gp@gmail.com"}</p>
+                <p>Mon – Fri, 10:00 AM – 5:00 PM</p>
+              </div>
+            </div>
+
+            {/* In-Person Counter Support */}
+            <div className="rounded-2xl border bg-card p-4 space-y-2 shadow-sm">
+              <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                <MapPin size={18} />
+                <span>Citizen Helpdesk Counter</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Visit the facilitation counter at the Panchayat Bhavan for in-person document scrutiny, warish affidavit guidelines, or technical support.
+              </p>
+              <div className="pt-1">
+                <Badge variant="secondary" className="text-[10px]">
+                  Hanskhali Block · Nadia
+                </Badge>
+              </div>
+            </div>
           </div>
         </Section>
       </div>

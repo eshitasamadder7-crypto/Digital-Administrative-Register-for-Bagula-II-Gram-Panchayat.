@@ -328,7 +328,7 @@ export default function WbpmsInfo() {
           name="description"
           content="Official document requirements, video tutorials, and guidelines for WBPMS certificate services solely for Bagula 2 No Gram Panchayat."
         />
-        <link rel="canonical" href="https://deo-workflow-helper.lovable.app/wbpms-info" />
+        <link rel="canonical" href="https://bagula2gp.lovable.app/wbpms-info" />
       </Helmet>
 
       <GoBackButton fallbackUrl="/" className="mb-4 -ml-2" />

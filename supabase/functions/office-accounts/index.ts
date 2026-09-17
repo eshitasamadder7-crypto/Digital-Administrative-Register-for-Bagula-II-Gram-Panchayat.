@@ -23,9 +23,11 @@ const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const isMobile = (v: string) => /^[6-9][0-9]{9}$/.test(v);
 
 function passwordProblem(pw: string): string | null {
-  if (!pw || pw.length < 8) return "Temporary password must be at least 8 characters.";
-  if (!/[A-Za-z]/.test(pw)) return "Temporary password must contain a letter.";
-  if (!/[0-9]/.test(pw)) return "Temporary password must contain a number.";
+  if (!pw || pw.length < 8) return "Password must be at least 8 characters.";
+  if (!/[A-Z]/.test(pw)) return "Password must contain at least 1 uppercase letter (A-Z).";
+  if (!/[a-z]/.test(pw)) return "Password must contain at least 1 lowercase letter (a-z).";
+  if (!/[0-9]/.test(pw)) return "Password must contain at least 1 number (0-9).";
+  if (!/[^A-Za-z0-9]/.test(pw)) return "Password must contain at least 1 special character (!@#$%^&* etc.).";
   return null;
 }
 

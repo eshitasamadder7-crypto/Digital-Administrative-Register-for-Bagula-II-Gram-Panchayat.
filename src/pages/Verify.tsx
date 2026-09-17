@@ -210,8 +210,8 @@ export default function Verify() {
       <Helmet>
         <title>Verify Certificate — Bagula II Gram Panchayat</title>
         <meta name="description" content="Check whether a Warish or Dependent certificate issued by Bagula II Gram Panchayat is genuine using its Verification ID or memo number and issue date." />
-        <link rel="canonical" href="https://deo-workflow-helper.lovable.app/verify" />
-        <meta property="og:url" content="https://deo-workflow-helper.lovable.app/verify" />
+        <link rel="canonical" href="https://bagula2gp.lovable.app/verify" />
+        <meta property="og:url" content="https://bagula2gp.lovable.app/verify" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Verify Certificate — Bagula II Gram Panchayat" />
         <meta property="og:description" content="Check whether a Warish or Dependent certificate issued by Bagula II Gram Panchayat is genuine using its Verification ID or memo number." />
