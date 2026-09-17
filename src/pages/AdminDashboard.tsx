@@ -41,8 +41,10 @@ const adminCards: CardDef[] = [
   { id: "admin-account", title: "⚙️ Profile Settings", desc: "Mobile, email, password, language and notifications.", to: "/admin/account", icon: UserCog },
 ];
 
-// 🔴 Super Admin (Watcher) — govern & manage. Never creates or issues certificates.
+// 🔴 Super Admin (Supervisor & Authority) — full permissions allowed across office governance & certificates.
 const superAdminCards: CardDef[] = [
+  { id: "super-cert-review", title: "📥 Applications Review & Approval", desc: "Supervisory review, return, approve, or issue Warish, Dependent, and Linkage applications.", to: "/admin/review?kind=warish&filter=waiting", icon: ClipboardCheck },
+  { id: "super-cert-issued", title: "📜 Issued Certificates Register", desc: "View all issued certificates, verification memo numbers, and archival records.", to: "/admin/review?kind=warish&filter=issued", icon: FileCheck2 },
   { id: "super-system-status", title: "🖥️ System Status & Telemetry", desc: "Live database health, connection latency, auth error logs, and storage usage statistics.", to: "/admin/system-status", icon: Activity },
   { id: "super-deo-tiers-quotas", title: "⚖️ DEO Quotas & 1/2/3 Certificate Tiers", desc: "Dedicated review of all DEO accounts: set 1/2/3 certificate tiers (Warish, Dependent, Linkage), toggle birth digitization, and adjust daily draft quotas.", to: "/admin/deo-quotas", icon: ShieldCheck },
   { id: "super-citizen-cyber-profiles", title: "👥 Citizen & Cyber Cafe Directory", desc: "View registered citizens, cyber cafe nodes, and adjust individual application quotas.", to: "/admin/profiles-directory", icon: Users },
@@ -228,6 +230,7 @@ export default function AdminDashboard() {
               <div className="flex flex-wrap gap-2">
                 {authz.isSuperAdmin ? (
                   <>
+                    <Link to="/admin/review?kind=warish&filter=waiting"><Button size="sm" variant="outline"><ClipboardCheck size={13} className="mr-1.5" />📥 Review Applications</Button></Link>
                     <Link to="/admin/employees"><Button size="sm" variant="outline"><Users size={13} className="mr-1.5" />👥 Employees</Button></Link>
                     <Link to="/admin/master-data"><Button size="sm" variant="outline"><Database size={13} className="mr-1.5" />🗂️ Master Data</Button></Link>
                     <Link to="/admin/notices"><Button size="sm" variant="outline"><Bell size={13} className="mr-1.5" />📢 New Notice</Button></Link>

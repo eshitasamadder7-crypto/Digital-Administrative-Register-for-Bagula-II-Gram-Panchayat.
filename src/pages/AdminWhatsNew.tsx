@@ -8,9 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Trash2, LogOut, Plus, Pin, Archive } from "lucide-react";
+import { Trash2, LogOut, Plus, Pin, Archive, Bell } from "lucide-react";
 import { SignOutConfirmDialog } from "@/components/SignOutConfirmDialog";
 import { BackButton } from "@/components/BackButton";
+import { saveNotice, deleteNotice as deleteBackendNotice, archiveNotice as archiveBackendNotice } from "@/services/noticeService";
 
 type ExpiryMode = "never" | "date" | "datetime" | "manual";
 
@@ -32,6 +33,10 @@ export default function AdminWhatsNew() {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [postedOn, setPostedOn] = useState(today());
+  const [title, setTitle] = useState("");
+  const [memoNo, setMemoNo] = useState("");
+  const [category, setCategory] = useState("general");
+  const [priority, setPriority] = useState<"urgent" | "high" | "normal">("normal");
   const [content, setContent] = useState("");
   const [sortOrder, setSortOrder] = useState(1);
   const [busy, setBusy] = useState(false);
@@ -73,23 +78,47 @@ export default function AdminWhatsNew() {
       return;
     }
     setBusy(true);
+
+    const noticeTitle = title.trim() || (content.trim().slice(0, 70) + (content.trim().length > 70 ? "..." : ""));
+    const expiryIso =
+      expiryMode === "date" || expiryMode === "datetime"
+        ? new Date(expiresAt).toISOString()
+        : null;
+
+    // 1. Sync to notices backend service
+    await saveNotice({
+      title: noticeTitle,
+      notice_no: memoNo.trim() || null,
+      category,
+      priority,
+      content: content.trim(),
+      is_pinned: pin,
+      is_published: true,
+      expiry_date: expiryIso,
+      target_audience: "all",
+    });
+
+    // 2. Sync to legacy whats_new_entries table
     const { error } = await supabase.from("whats_new_entries").insert({
       posted_on: postedOn,
       content: content.trim(),
       sort_order: sortOrder,
       is_pinned: pin,
       expiry_mode: expiryMode,
-      expires_at:
-        expiryMode === "date" || expiryMode === "datetime"
-          ? new Date(expiresAt).toISOString()
-          : null,
+      expires_at: expiryIso,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Notice added");
+    if (error) {
+      console.warn("whats_new_entries insert error:", error);
+    }
+    toast.success("Official notice published & synced to backend");
+    setTitle("");
+    setMemoNo("");
     setContent("");
     setSortOrder(sortOrder + 1);
     setPin(false);
+    setPriority("normal");
+    setCategory("general");
     setExpiryMode("never");
     setExpiresAt("");
     loadEntries();
@@ -110,6 +139,7 @@ export default function AdminWhatsNew() {
 
   const archiveEntry = async (id: string) => {
     if (!confirm("Archive this notice? It will be hidden from the public site but kept for records.")) return;
+    archiveBackendNotice(id);
     const { error } = await supabase
       .from("whats_new_entries")
       .update({ archived_at: new Date().toISOString() })
@@ -131,6 +161,7 @@ export default function AdminWhatsNew() {
 
   const deleteEntry = async (id: string) => {
     if (!confirm("Permanently delete this entry? Consider archiving instead.")) return;
+    deleteBackendNotice(id);
     const { error } = await supabase.from("whats_new_entries").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
@@ -172,8 +203,58 @@ export default function AdminWhatsNew() {
 
         <form onSubmit={addEntry} className="rounded-2xl border bg-white/80 backdrop-blur-sm p-5 space-y-3 shadow-sm">
           <h2 className="text-sm font-semibold flex items-center gap-2">
-            <Plus size={14} /> New entry
+            <Plus size={14} /> New Official Notice / Update
           </h2>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="title">Notice Title (Optional)</Label>
+              <Input
+                id="title"
+                placeholder="e.g., Sansad Meeting Resolution / Tax Schedule"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="memoNo">Notice / Memo No. (Optional)</Label>
+              <Input
+                id="memoNo"
+                placeholder="e.g., B-II/GP/NOTICE/2026/08"
+                value={memoNo}
+                onChange={(e) => setMemoNo(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label>Category</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="general">General Announcements</SelectItem>
+                  <SelectItem value="birth_death">Birth &amp; Death Digitalization</SelectItem>
+                  <SelectItem value="meetings">Gram Sabha / Sansad Meetings</SelectItem>
+                  <SelectItem value="tax">Property / Holding Tax</SelectItem>
+                  <SelectItem value="schemes">Welfare Schemes &amp; 100-Day Work</SelectItem>
+                  <SelectItem value="tenders">Tenders &amp; Quotations</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Priority</Label>
+              <Select value={priority} onValueChange={(v) => setPriority(v as any)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="high">High Priority</SelectItem>
+                  <SelectItem value="urgent">Urgent / Red Alert</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="date">Date</Label>
@@ -185,8 +266,8 @@ export default function AdminWhatsNew() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="content">Content</Label>
-            <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} placeholder="🟢 Describe the update..." required />
+            <Label htmlFor="content">Notice Content / Circular Text</Label>
+            <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} placeholder="🟢 Enter the full notice details..." rows={4} required />
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">

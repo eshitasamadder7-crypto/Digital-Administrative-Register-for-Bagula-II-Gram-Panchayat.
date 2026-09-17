@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { ShieldAlert, Home, Eye, EyeOff } from "lucide-react";
+import { ShieldAlert, Home, Eye, EyeOff, Mail, KeyRound, ArrowLeft, RefreshCw, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { ADMIN_EMAILS } from "@/components/RequireAdmin";
 import { type OfficeRole } from "@/lib/permissions";
@@ -55,7 +55,7 @@ function nextPath(): string | null {
   return validateAdminRedirect(raw, window.location.origin);
 }
 
-type Method = "google" | "password" | "session";
+type Method = "google" | "password" | "otp" | "session";
 
 /**
  * Checks that the signed-in account is an office account and that the login
@@ -64,6 +64,26 @@ type Method = "google" | "password" | "session";
  */
 async function validateOfficeSession(userId: string, email: string | null, method: Method): Promise<{ problem: string | null; role: OfficeRole | null }> {
   const normEmail = email?.trim().toLowerCase() ?? null;
+
+  // Designated Super Admin is unconditionally authorized & synced to Supabase
+  if (normEmail === "bagula2nogp111@gmail.com" || normEmail === "nitish374482@gmail.com") {
+    supabase
+      .from("user_roles")
+      .upsert({ user_id: userId, role: "super_admin" } as any)
+      .then(() => {});
+    supabase
+      .from("admin_profiles")
+      .upsert({
+        user_id: userId,
+        email: normEmail,
+        display_name: "Super Admin (Bagula-II GP)",
+        status: "active",
+        allowed_login_method: "all",
+        service_scope: ["all"],
+      } as any)
+      .then(() => {});
+    return { problem: null, role: "super_admin" };
+  }
 
   // Active temporary session for designated Super Admins
   if (
@@ -95,15 +115,9 @@ async function validateOfficeSession(userId: string, email: string | null, metho
     if (profileError) return { problem: `Office profile verification failed: ${profileError.message}`, role: null };
   }
   if (!roles || roles.length === 0) {
-    if (normEmail === "bagula2nogp111@gmail.com" || normEmail === "nitish374482@gmail.com") {
-      return { problem: null, role: "super_admin" };
-    }
     return { problem: "This account is not registered as an office user.", role: null };
   }
   if (!profile) {
-    if (normEmail === "bagula2nogp111@gmail.com" || normEmail === "nitish374482@gmail.com") {
-      return { problem: null, role: "super_admin" };
-    }
     return { problem: "This office account has no active profile. Contact the Super Admin.", role: null };
   }
 
@@ -112,9 +126,9 @@ async function validateOfficeSession(userId: string, email: string | null, metho
 
   const allowed = (profile as any)?.allowed_login_method ?? "both";
   if (allowed === "google" && method === "password")
-    return { problem: "This account may only sign in with Google.", role: null };
+    return { problem: "This account may only sign in with Google or OTP to Mail.", role: null };
   if (allowed === "password" && method === "google")
-    return { problem: "This account may only sign in with email and password.", role: null };
+    return { problem: "This account may only sign in with email and password or OTP to Mail.", role: null };
 
   // Strict role resolution
   let role: OfficeRole = "deo";
@@ -140,10 +154,25 @@ export default function AdminAuth() {
   const [searchParams] = useSearchParams();
   const [busy, setBusy] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [authMode, setAuthMode] = useState<"password" | "otp">("password");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [disclaimer, setDisclaimer] = useState<string | null>(null);
+
+  // OTP to mail states
+  const [otpEmail, setOtpEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCountdown, setOtpCountdown] = useState(0);
+
+  useEffect(() => {
+    if (otpCountdown <= 0) return;
+    const interval = setInterval(() => {
+      setOtpCountdown((c) => (c > 0 ? c - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [otpCountdown]);
 
   useEffect(() => {
     // Check if redirected due to idle timeout
@@ -223,14 +252,27 @@ export default function AdminAuth() {
   const signInWithGoogle = async () => {
     setBusy(true);
     try {
+      const redirectUri =
+        window.location.origin +
+        "/admin" +
+        (nextPath() ? `?next=${encodeURIComponent(nextPath()!)}` : "");
+
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri:
-          window.location.origin +
-          "/admin" +
-          (nextPath() ? `?next=${encodeURIComponent(nextPath()!)}` : ""),
+        redirect_uri: redirectUri,
         extraParams: { prompt: "select_account" },
       });
-      if (result.error) throw result.error;
+      if (result.error) {
+        // Fallback to native supabase OAuth if Lovable client encountered an issue
+        const { error: sbError } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: redirectUri,
+            queryParams: { prompt: "select_account" },
+          },
+        });
+        if (sbError) throw sbError;
+        return;
+      }
       if (result.redirected) return; // Browser is leaving the page
       const { data } = await supabase.auth.getSession();
       if (!data.session) throw new Error("Sign-in did not complete.");
@@ -244,7 +286,7 @@ export default function AdminAuth() {
       }
       goOn(role);
     } catch (err: any) {
-      toast.error(err?.message ?? "Sign-in failed");
+      toast.error(err?.message ?? "Google sign-in failed");
     } finally {
       setBusy(false);
     }
@@ -318,6 +360,99 @@ export default function AdminAuth() {
     }
   };
 
+  const sendOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const targetEmail = (otpEmail || email).trim().toLowerCase();
+    if (!targetEmail) {
+      toast.error("Please enter your official email address.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const redirectUri =
+        window.location.origin +
+        "/admin" +
+        (nextPath() ? `?next=${encodeURIComponent(nextPath()!)}` : "");
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email: targetEmail,
+        options: {
+          emailRedirectTo: redirectUri,
+        },
+      });
+      if (error) {
+        throw error;
+      }
+      setOtpSent(true);
+      setOtpCountdown(60);
+      toast.success(`One-Time Code (OTP) sent to ${targetEmail}`);
+      recordAuthIncident({
+        action_type: "auth.otp_requested",
+        actor_email: targetEmail,
+        reason: "Admin OTP requested for office authentication",
+        severity: "info",
+      });
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to send OTP. Please verify email address.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const verifyOtpCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetEmail = (otpEmail || email).trim().toLowerCase();
+    const code = otpCode.trim();
+    if (!code || code.length < 6) {
+      toast.error("Please enter the 6-digit OTP code sent to your email.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: targetEmail,
+        token: code,
+        type: "email",
+      });
+      if (error) {
+        recordAuthIncident({
+          action_type: "auth.otp_failed",
+          actor_email: targetEmail,
+          reason: `OTP verification failed: ${error.message}`,
+          severity: "warning",
+        });
+        throw new Error(error.message || "Invalid or expired OTP code.");
+      }
+      const user = data.user;
+      if (!user) throw new Error("Verification succeeded but no authenticated user returned.");
+      const mail = user.email?.trim().toLowerCase() ?? targetEmail;
+      const { problem, role } = await validateOfficeSession(user.id, mail, "otp");
+      if (problem) {
+        recordAuthIncident({
+          action_type: "auth.unauthorized_access",
+          actor_email: mail,
+          reason: problem,
+          severity: "warning",
+        });
+        await supabase.auth.signOut();
+        toast.error(problem);
+        return;
+      }
+      recordAuthIncident({
+        action_type: "auth.signin_success",
+        actor_email: mail,
+        reason: `Admin user signed in via Email OTP with ${role} privileges`,
+        severity: "info",
+      });
+      toast.success("Office authentication verified successfully!");
+      goOn(role);
+    } catch (err: any) {
+      toast.error(err?.message || "Verification failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
@@ -342,7 +477,7 @@ export default function AdminAuth() {
         <div className="text-center">
           <h1 className="text-lg font-bold">Office Sign In</h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Use Google or your official email and password — whichever your account allows.
+            Google account, email password, or OTP to mail are allowed for office login.
           </p>
         </div>
 
@@ -358,7 +493,8 @@ export default function AdminAuth() {
           </Alert>
         )}
 
-        <Button onClick={signInWithGoogle} disabled={busy} className="w-full gap-2">
+        {/* 1. Google OAuth Sign In */}
+        <Button onClick={signInWithGoogle} disabled={busy} className="w-full gap-2 font-medium">
           <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
             <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/>
             <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
@@ -368,56 +504,195 @@ export default function AdminAuth() {
           {busy ? "Please wait..." : "Sign in with Google"}
         </Button>
 
-        <div className="flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
+        <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          <span className="h-px flex-1 bg-border/60" /> or choose login method <span className="h-px flex-1 bg-border/60" />
         </div>
 
-        <form onSubmit={signInWithPassword} className="space-y-3">
-          <div className="space-y-1">
-            <label htmlFor="office-email" className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Official email
-            </label>
-            <Input
-              id="office-email"
-              type="email"
-              autoComplete="username"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="officer@example.com"
-            />
-          </div>
-          <div className="space-y-1">
-            <label htmlFor="office-password" className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Password
-            </label>
-            <div className="relative">
+        {/* 2. Method Tabs: Password vs OTP */}
+        <div className="grid grid-cols-2 p-1 bg-muted/60 rounded-xl text-xs font-medium">
+          <button
+            type="button"
+            onClick={() => setAuthMode("password")}
+            className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all ${
+              authMode === "password"
+                ? "bg-white text-foreground shadow-xs font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <KeyRound size={14} />
+            Password
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAuthMode("otp");
+              if (!otpEmail && email) setOtpEmail(email);
+            }}
+            className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all ${
+              authMode === "otp"
+                ? "bg-white text-foreground shadow-xs font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Mail size={14} />
+            OTP to Mail
+          </button>
+        </div>
+
+        {/* 3. Password Form */}
+        {authMode === "password" && (
+          <form onSubmit={signInWithPassword} className="space-y-3">
+            <div className="space-y-1">
+              <label htmlFor="office-email" className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                Official email
+              </label>
               <Input
-                id="office-password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                className="pr-10"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                id="office-email"
+                type="email"
+                autoComplete="username"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (!otpEmail) setOtpEmail(e.target.value);
+                }}
+                placeholder="bagula2nogp111@gmail.com"
+                required
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
             </div>
+            <div className="space-y-1">
+              <label htmlFor="office-password" className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                Password
+              </label>
+              <div className="relative">
+                <Input
+                  id="office-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  className="pr-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+            <Button type="submit" variant="default" className="w-full" disabled={busy || !email || !password}>
+              {busy ? "Signing in..." : "Sign in with password"}
+            </Button>
+          </form>
+        )}
+
+        {/* 4. OTP to Mail Form */}
+        {authMode === "otp" && (
+          <div className="space-y-3">
+            {!otpSent ? (
+              <form onSubmit={sendOtp} className="space-y-3">
+                <div className="space-y-1">
+                  <label htmlFor="otp-email" className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    Google account / Official email
+                  </label>
+                  <Input
+                    id="otp-email"
+                    type="email"
+                    autoComplete="email"
+                    value={otpEmail || email}
+                    onChange={(e) => {
+                      setOtpEmail(e.target.value);
+                      setEmail(e.target.value);
+                    }}
+                    placeholder="bagula2nogp111@gmail.com"
+                    required
+                  />
+                  <p className="text-[11px] text-muted-foreground leading-tight pt-0.5">
+                    A 6-digit one-time security code will be sent to this email.
+                  </p>
+                </div>
+                <Button type="submit" variant="default" className="w-full gap-2" disabled={busy || !(otpEmail || email)}>
+                  <Mail size={15} />
+                  {busy ? "Sending Code..." : "Send OTP to Mail"}
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={verifyOtpCode} className="space-y-3">
+                <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/20 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <CheckCircle2 size={15} className="text-primary shrink-0" />
+                    <div className="truncate">
+                      <span className="text-muted-foreground block text-[10px]">OTP sent to:</span>
+                      <span className="font-semibold text-foreground font-mono truncate block">
+                        {otpEmail || email}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpSent(false);
+                      setOtpCode("");
+                    }}
+                    className="text-[11px] text-primary hover:underline shrink-0 ml-2"
+                  >
+                    Change
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  <label htmlFor="otp-code" className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    6-Digit One-Time Code
+                  </label>
+                  <Input
+                    id="otp-code"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    autoFocus
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                    placeholder="000000"
+                    className="text-center font-mono text-lg tracking-[0.35em] font-semibold"
+                    required
+                  />
+                </div>
+
+                <Button type="submit" variant="default" className="w-full" disabled={busy || otpCode.length < 6}>
+                  {busy ? "Verifying..." : "Verify & Sign In"}
+                </Button>
+
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setOtpSent(false)}
+                    className="hover:text-foreground inline-flex items-center gap-1"
+                  >
+                    <ArrowLeft size={12} /> Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => sendOtp()}
+                    disabled={busy || otpCountdown > 0}
+                    className="text-primary hover:underline disabled:opacity-50 disabled:no-underline inline-flex items-center gap-1"
+                  >
+                    <RefreshCw size={11} className={busy ? "animate-spin" : ""} />
+                    {otpCountdown > 0 ? `Resend in ${otpCountdown}s` : "Resend OTP"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
-          <Button type="submit" variant="outline" className="w-full" disabled={busy || !email || !password}>
-            Sign in with password
-          </Button>
-        </form>
+        )}
 
         <p className="text-[10px] text-muted-foreground text-center">
-          Accounts are created by the Super Admin. If you were given a temporary password,
-          you will be asked to change it after signing in.
+          Super Admin (<span className="font-mono text-[10px]">bagula2nogp111@gmail.com</span>) has full system authority.
+          Office accounts are provisioned and managed by the Super Admin.
         </p>
 
         <div className="pt-2 text-center border-t border-border/40">
@@ -431,3 +706,4 @@ export default function AdminAuth() {
     </div>
   );
 }
+

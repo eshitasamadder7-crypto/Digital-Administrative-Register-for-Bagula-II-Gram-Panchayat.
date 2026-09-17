@@ -75,9 +75,30 @@ export default function RequireAdmin({ children }: { children: ReactNode }) {
 
       const isSuperAdminEmail = email === "bagula2nogp111@gmail.com" || email === "nitish374482@gmail.com";
 
-      if (!roles || roles.length === 0) {
+      if (isSuperAdminEmail) {
+        const hasSuperRole = (roles ?? []).some((r) => r.role === "super_admin");
+        if (!hasSuperRole) {
+          supabase
+            .from("user_roles")
+            .upsert({ user_id: session.user.id, role: "super_admin" } as any)
+            .then(() => {});
+        }
+        if (!profile) {
+          supabase
+            .from("admin_profiles")
+            .upsert({
+              user_id: session.user.id,
+              email: email,
+              display_name: "Super Admin (Bagula-II GP)",
+              status: "active",
+              allowed_login_method: "all",
+              service_scope: ["all"],
+            } as any)
+            .then(() => {});
+        }
+      } else if (!roles || roles.length === 0) {
         // Allow self-provision for whitelisted emails or temp admin session
-        if (isTempAdminSession || isSuperAdminEmail) {
+        if (isTempAdminSession) {
           // Authorized session for primary GP Super Admin
         } else if (email && ADMIN_EMAILS.includes(email)) {
           const { error: rpcError } = await supabase.rpc("bootstrap_admin_role");

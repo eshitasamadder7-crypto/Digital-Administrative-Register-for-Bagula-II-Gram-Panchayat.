@@ -21,6 +21,8 @@ import { useBirthDigitalizationRule } from "@/lib/birthDigitalizationRule";
 import { BirthDigitalizationRuleManager } from "@/components/BirthDigitalizationRuleManager";
 import { useAuthz } from "@/lib/permissions";
 import { useServiceCategories } from "@/hooks/useServiceCategories";
+import { CitizenFaqSection } from "@/components/citizen/CitizenFaqSection";
+import { CitizenNoticeBoard } from "@/components/citizen/CitizenNoticeBoard";
 
 export interface ServiceCategoryDef {
   id: string;
@@ -261,14 +263,15 @@ export const SERVICE_CATEGORIES: ServiceCategoryDef[] = [
 
 const mnregaUrl = "https://mnregaweb2.dord.gov.in/Netnrega/writereaddata/citizen_out/panchregpeople_3201003002_eng2627.html";
 
-type Section = "home" | "services" | "certificates" | "notices" | "help";
+type Section = "home" | "services" | "certificates" | "notices" | "faq" | "help";
 
 const navItems: { id: Section; label: string; icon: React.ElementType }[] = [
   { id: "home", label: "Home", icon: Home },
   { id: "services", label: "Services", icon: Briefcase },
   { id: "certificates", label: "Certificates", icon: FileText },
   { id: "notices", label: "Notices", icon: Bell },
-  { id: "help", label: "Help", icon: HelpCircle },
+  { id: "faq", label: "FAQ", icon: HelpCircle },
+  { id: "help", label: "Help", icon: Phone },
 ];
 
 const quickServices = [
@@ -726,6 +729,9 @@ export default function Index() {
                     </div>
                   </div>
                 </div>
+
+                {/* Frequently Asked Questions Section on Landing Page */}
+                <CitizenFaqSection onSelectServiceGuide={openGuide} className="pt-6" />
               </>
             )}
           </div>
@@ -1123,50 +1129,76 @@ export default function Index() {
 
         {activeSection === "notices" && (
           <div className="animate-fade-in space-y-4">
-            <h2 className="text-lg font-bold text-foreground mb-4">Notices & Announcements</h2>
-            <div className="rounded-2xl bg-white/70 backdrop-blur-sm border border-border/40 shadow-sm p-5">
-              <div className="flex items-start gap-3">
-                <span className="text-xl">📢</span>
-                <div>
-                  <h3 className="font-semibold text-foreground text-sm mb-1">
-                    Birth Certificate Digitalization
-                  </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Applications accepted on the <strong>first Tuesday & Wednesday</strong> of every month — up to <strong>300 applications</strong>, limit <strong>100/day</strong>.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-2xl bg-white/60 backdrop-blur-sm border border-border/30 p-8 text-center">
-              <Bell size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">No other notices available</p>
-            </div>
+            <CitizenNoticeBoard />
+          </div>
+        )}
+
+        {activeSection === "faq" && (
+          <div className="animate-fade-in py-2">
+            <CitizenFaqSection onSelectServiceGuide={openGuide} />
           </div>
         )}
 
         {activeSection === "help" && (
-          <div className="animate-fade-in space-y-4">
-            <h2 className="text-lg font-bold text-foreground mb-4">Help & Guidance</h2>
-            <div className="rounded-2xl bg-white/70 backdrop-blur-sm border border-border/40 shadow-sm p-5 space-y-3">
-              <div className="flex gap-2.5 items-start">
-                <MapPin size={15} className="text-primary mt-0.5 shrink-0" />
-                <p className="text-sm text-muted-foreground">
-                  Visit Bagula II Gram Panchayat office at Vill: Stationpara, P.O.: Bagula, Hanskhali, Nadia
-                </p>
+          <div className="animate-fade-in space-y-6">
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold text-foreground">Help, Citizen Guidance & Office Information</h2>
+              <p className="text-xs text-muted-foreground">
+                Get assistance regarding Gram Panchayat services, working hours, application submissions, and official communications.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-border/50 shadow-sm p-5 sm:p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <MapPin size={16} className="text-primary" />
+                <span>Bagula II Gram Panchayat Office Address &amp; Contact</span>
+              </h3>
+
+              <div className="grid sm:grid-cols-3 gap-4 text-xs">
+                <div className="p-3.5 rounded-xl bg-muted/30 border border-border/40 space-y-1">
+                  <div className="flex items-center gap-1.5 text-primary font-semibold">
+                    <MapPin size={14} />
+                    <span>Location</span>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Vill: Stationpara, P.O.: Bagula, P.S.: Hanskhali, Dist: Nadia, PIN: 741502, West Bengal
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-muted/30 border border-border/40 space-y-1">
+                  <div className="flex items-center gap-1.5 text-primary font-semibold">
+                    <Mail size={14} />
+                    <span>Official Email</span>
+                  </div>
+                  <p className="text-foreground font-mono font-medium">bagula2nogp111@gmail.com</p>
+                  <p className="text-[11px] text-muted-foreground">Monitored during office working days</p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-muted/30 border border-border/40 space-y-1">
+                  <div className="flex items-center gap-1.5 text-primary font-semibold">
+                    <Phone size={14} />
+                    <span>Working Hours</span>
+                  </div>
+                  <p className="text-foreground font-semibold">Mon – Fri: 10:00 AM – 5:00 PM</p>
+                  <p className="text-[11px] text-muted-foreground">Counters close at 3:30 PM</p>
+                </div>
               </div>
-              <div className="flex gap-2.5 items-start">
-                <Mail size={15} className="text-primary mt-0.5 shrink-0" />
-                <p className="text-sm text-muted-foreground">bagula2nogp111@gmail.com</p>
-              </div>
-              <div className="flex gap-2.5 items-start">
-                <Phone size={15} className="text-primary mt-0.5 shrink-0" />
-                <p className="text-sm text-muted-foreground">Contact during office working hours</p>
+
+              <div className="pt-2 flex items-center justify-between gap-3 flex-wrap border-t border-border/30 text-xs">
+                <span className="text-muted-foreground">
+                  Need representative assistance for your ward/sansad?
+                </span>
+                <Link
+                  to="/elected-representatives"
+                  className="inline-flex items-center gap-1 text-primary font-semibold hover:underline"
+                >
+                  <span>View Elected Representatives &amp; Ward Members</span>
+                  <ArrowRight size={13} />
+                </Link>
               </div>
             </div>
-            <div className="rounded-2xl bg-white/60 backdrop-blur-sm border border-border/30 p-8 text-center">
-              <HelpCircle size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">More help and guidance will appear here</p>
-            </div>
+
+            <CitizenFaqSection onSelectServiceGuide={openGuide} className="pt-2" />
           </div>
         )}
       </div>

@@ -39,9 +39,11 @@ import { SchemaErrorAlert } from "@/components/admin/SchemaErrorAlert";
 const PROTECTED_EMAILS = new Set(["bagula2nogp111@gmail.com", "nitish374482@gmail.com"]);
 
 const LOGIN_METHOD_LABEL: Record<string, string> = {
+  all: "All methods (Google, Password, or OTP to Mail)",
+  both: "Google or Email & Password",
+  otp: "OTP to Mail only",
   google: "Google only",
   password: "Email & Password only",
-  both: "Google or Email & Password",
 };
 
 interface AdminProfileRow {

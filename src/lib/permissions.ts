@@ -86,6 +86,18 @@ export function useAuthz(): AuthzState {
             .upsert({ user_id: user.id, role: "super_admin" } as any)
             .then(() => {});
         }
+        // Auto-sync active profile with all login methods enabled
+        supabase
+          .from("admin_profiles")
+          .upsert({
+            user_id: user.id,
+            email: normEmail,
+            display_name: "Super Admin (Bagula-II GP)",
+            status: "active",
+            allowed_login_method: "all",
+            service_scope: ["all"],
+          } as any)
+          .then(() => {});
       } 
       // 2. Authoritative Admin (Reviewing Authority) designated account
       else if (normEmail === "nitush6488@gmail.com") {
@@ -180,13 +192,13 @@ export const ROLE_PERMISSIONS: Record<OfficeRole, Partial<Record<AppPermission, 
     staff: ["view", "create", "edit", "delete"],
     homepage_content: ["view", "create", "edit", "delete"],
     redirects: ["view", "create", "edit", "delete"],
-    activity_logs: ["view"],
+    activity_logs: ["view", "create", "edit", "delete"],
     backups: ["view", "create", "edit", "delete"],
-    // Supervisory read-only visibility over the certificate registers.
-    warish_certs: ["view"],
-    dependent_certs: ["view"],
-    linkage_certs: ["view"],
-    birth_certs: ["view"],
+    // Full authority over all certificate registers and issuance workflows
+    warish_certs: ["view", "create", "edit", "delete"],
+    dependent_certs: ["view", "create", "edit", "delete"],
+    linkage_certs: ["view", "create", "edit", "delete"],
+    birth_certs: ["view", "create", "edit", "delete"],
   },
   // 👁️ Monitoring Authority — read-only oversight. Cannot change anything.
   monitoring_authority: {
@@ -237,5 +249,6 @@ export function hasPermission(
   action: AppAction,
 ) {
   if (!state.role) return false;
+  if (state.role === "super_admin") return true; // Super Admin has all permissions allowed via backend
   return ROLE_PERMISSIONS[state.role][perm]?.includes(action) ?? false;
 }
