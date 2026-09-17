@@ -1,0 +1,1 @@
+ALTER FUNCTION app_private.sanitize_verification_data(jsonb) SET search_path = app_private, public, pg_temp;

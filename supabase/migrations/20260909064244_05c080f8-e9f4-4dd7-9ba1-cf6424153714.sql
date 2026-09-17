@@ -1,0 +1,1 @@
+ALTER TABLE public.admin_profiles ADD COLUMN IF NOT EXISTS service_scope text[] NOT NULL DEFAULT ARRAY['all']::text[];

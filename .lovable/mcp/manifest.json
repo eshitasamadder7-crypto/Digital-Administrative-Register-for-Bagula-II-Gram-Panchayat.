@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "sdk_version": "0.25.1",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://iyyrjpzfjsslqibibpsx.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "bagula-gp-dar-mcp",
+      "version": "0.1.0",
+      "title": "Bagula GP DAR"
+    },
+    "tools": [
+      {
+        "name": "queue_summary",
+        "title": "Certificate queue summary",
+        "description": "Live counts of Warish and Dependent applications by workflow status, plus items returned for modification.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_certificates",
+        "title": "List certificate applications",
+        "description": "List Warish or Dependent certificate applications visible to the signed-in officer, optionally filtered by status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "warish",
+                "dependent"
+              ],
+              "description": "Certificate register to read."
+            },
+            "status": {
+              "type": "string",
+              "description": "Optional exact status filter, e.g. Draft, Submitted, Approved, Rejected, Issued."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Max rows to return (default 20, max 100)."
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_certificates",
+        "title": "Search certificate applications",
+        "description": "Search Warish and Dependent applications by applicant name, village, memo number, certificate number, or verification id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Free text to match against name, village, memo or certificate number."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Max rows per register (default 10, max 50)."
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_certificate",
+        "title": "Get a certificate application",
+        "description": "Fetch the full record of one Warish or Dependent certificate application, including its audit trail.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "warish",
+                "dependent"
+              ],
+              "description": "Certificate register to read."
+            },
+            "id": {
+              "type": "string",
+              "description": "Application id (uuid)."
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "verify_certificate",
+        "title": "Verify a certificate",
+        "description": "Verify an issued certificate by its public verification id, using the same check as the public verification page.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "verification_id": {
+              "type": "string",
+              "description": "Verification id printed on the certificate / QR code."
+            }
+          },
+          "required": [
+            "verification_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

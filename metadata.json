@@ -1,0 +1,6 @@
+{
+  "name": "Bagula II Gram Panchayat",
+  "description": "Bagula II Gram Panchayat, Hanskhali, Nadia — birth & death records, WBPMS certificates, MGNREGA jobs, PRD tax and warish (succession) services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

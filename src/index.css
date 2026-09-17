@@ -1,0 +1,303 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Refined premium government palette.
+       Deeper navy, softer saffron, richer green, wider neutral scale.
+       All tokens are HSL triplets for use with hsl(var(--token)). */
+    --background: 30 40% 98%;
+    --foreground: 225 40% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 225 40% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 40% 12%;
+
+    --primary: 28 92% 38%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 32 96% 62%;
+
+    --secondary: 224 66% 22%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 18% 96%;
+    --muted-foreground: 220 12% 42%;
+
+    --accent: 152 55% 26%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 76% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 148 60% 34%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 96% 48%;
+    --warning-foreground: 30 40% 12%;
+
+    --info: 210 88% 45%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 220 16% 88%;
+    --input: 220 16% 90%;
+    --ring: 28 92% 54%;
+
+    --radius: 0.65rem;
+
+    --saffron: 28 92% 54%;
+    --navy: 224 66% 22%;
+    --gov-green: 152 55% 26%;
+    --gov-white: 0 0% 100%;
+
+    /* Premium gradients & elevation */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-navy: linear-gradient(135deg, hsl(var(--navy)) 0%, hsl(224 60% 32%) 100%);
+    --gradient-hero: linear-gradient(160deg, hsl(30 90% 96%) 0%, hsl(0 0% 100%) 45%, hsl(152 45% 95%) 100%);
+    --shadow-sm: 0 1px 2px 0 hsl(224 40% 12% / 0.05);
+    --shadow-elevated: 0 10px 30px -12px hsl(224 40% 20% / 0.18);
+    --shadow-premium: 0 20px 40px -16px hsl(28 92% 40% / 0.25);
+
+    --sidebar-background: 30 20% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 30 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 30 15% 95%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 30 13% 91%;
+    --sidebar-ring: 30 100% 60%;
+
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Sans 3', 'Segoe UI', sans-serif;
+    --font-bengali: 'Noto Sans Bengali', sans-serif;
+    --font-certificate: 'Times New Roman', Georgia, serif;
+  }
+
+  .dark {
+    --background: 30 10% 8%;
+    --foreground: 30 40% 98%;
+    --card: 30 10% 12%;
+    --card-foreground: 30 40% 98%;
+    --popover: 30 10% 12%;
+    --popover-foreground: 30 40% 98%;
+    --primary: 30 100% 60%;
+    --primary-foreground: 230 76% 15%;
+    --secondary: 230 50% 40%;
+    --secondary-foreground: 30 40% 98%;
+    --muted: 30 10% 18%;
+    --muted-foreground: 30 15% 65%;
+    --accent: 140 40% 35%;
+    --accent-foreground: 30 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 30 40% 98%;
+    --border: 30 10% 22%;
+    --input: 30 10% 22%;
+    --ring: 30 100% 60%;
+    --sidebar-background: 30 5% 10%;
+    --sidebar-foreground: 30 5% 96%;
+    --sidebar-primary: 30 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 30 4% 16%;
+    --sidebar-accent-foreground: 30 5% 96%;
+    --sidebar-border: 30 4% 16%;
+    --sidebar-ring: 30 100% 60%;
+  }
+
+  /* Party Profile Themes */
+  .theme-bjp {
+    --primary: 28 95% 45%;
+    --primary-glow: 32 98% 60%;
+    --ring: 28 95% 50%;
+  }
+
+  .theme-tmc {
+    --primary: 152 65% 32%;
+    --primary-glow: 152 70% 48%;
+    --ring: 152 65% 38%;
+  }
+
+  .theme-cpim {
+    --primary: 354 85% 44%;
+    --primary-glow: 354 90% 60%;
+    --ring: 354 85% 50%;
+  }
+
+  .theme-congress {
+    --primary: 221 83% 45%;
+    --primary-glow: 221 90% 62%;
+    --ring: 221 83% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer components {
+  .gov-tricolor-top {
+    background: linear-gradient(
+      to right,
+      hsl(var(--saffron)) 33.33%,
+      hsl(var(--gov-white)) 33.33% 66.66%,
+      hsl(var(--gov-green)) 66.66%
+    );
+    height: 4px;
+  }
+
+  .gov-gradient-header {
+    background: linear-gradient(135deg, hsl(var(--navy)), hsl(230 60% 35%));
+  }
+
+  .gov-card {
+    @apply bg-card rounded-lg border shadow-sm;
+    border-color: hsl(var(--saffron) / 0.15);
+  }
+
+  .gov-btn-primary {
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200;
+    background: hsl(var(--navy));
+    color: hsl(var(--gov-white));
+  }
+  .gov-btn-primary:hover {
+    background: hsl(230 76% 30%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px hsla(var(--navy) / 0.3);
+  }
+
+  .gov-btn-secondary {
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200;
+    background: hsl(var(--saffron));
+    color: hsl(var(--gov-white));
+  }
+  .gov-btn-secondary:hover {
+    background: hsl(30 100% 55%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px hsla(var(--saffron) / 0.3);
+  }
+
+  .gov-btn-accent {
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200;
+    background: hsl(var(--gov-green));
+    color: hsl(var(--gov-white));
+  }
+  .gov-btn-accent:hover {
+    background: hsl(140 50% 32%);
+    transform: translateY(-1px);
+  }
+
+  .certificate-paper {
+    background: white;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 1.27cm;
+    font-family: var(--font-certificate);
+    position: relative;
+    color: #000;
+    box-sizing: border-box;
+  }
+
+  .cert-inner-border {
+    border: 1px dashed #555;
+    min-height: 268mm;
+    padding: 10mm;
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+  }
+
+  .saffron-section-title {
+    @apply font-bold text-foreground border-l-4 pl-3;
+    border-color: hsl(var(--saffron));
+  }
+}
+
+@media print {
+  @page { size: A4; margin: 0; }
+  body {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  .no-print { display: none !important; }
+  .certificate-paper { box-shadow: none !important; margin: 0 !important; }
+
+  /* Strip chrome from the preview wrapper but keep the certificate visible */
+  .print-preview-wrapper {
+    background: white !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .print-preview-inner {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .certificate-area {
+    max-width: 210mm !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .cert-print-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    overflow: hidden !important;
+  }
+  .cert-print-container .certificate-paper {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    padding: 10mm !important;
+  }
+  .cert-print-container .cert-inner-border {
+    max-width: 190mm !important;
+    margin: 0 auto !important;
+  }
+
+  /* Hide watermarks and overlays */
+  .lovable-watermark,
+  [class*="watermark"],
+  [id*="watermark"],
+  div[style*="position: fixed"],
+  button,
+  .gov-btn-primary,
+  .gov-btn-secondary {
+    display: none !important;
+  }
+}
+
+/* Force clean render for PDF capture */
+.hiding-ui .certificate-area {
+  position: relative;
+  z-index: 9999;
+}
+.hiding-ui .no-print,
+.hiding-ui .lovable-watermark,
+.hiding-ui [class*="watermark"],
+.hiding-ui [id*="watermark"],
+.hiding-ui div[style*="position: fixed"] {
+  display: none !important;
+}

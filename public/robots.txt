@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /.lovable/
+
+Sitemap: https://bagula2gp.lovable.app/sitemap.xml

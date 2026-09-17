@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bagula II Gram Panchayat - Legacy Birth Certificate Digitization Pre-Verification Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-bengali { font-family: 'Noto Sans Bengali', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; color: black !important; padding: 0 !important; }
+      .print-card { border: 1px solid #000 !important; box-shadow: none !important; margin: 0 !important; width: 100% !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
+
+  <!-- TOP GOVERNMENT HEADER -->
+  <header class="no-print bg-[#0B2545] text-white border-b-4 border-amber-500 shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white text-lg shadow-inner">
+          WB
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="bg-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded text-white uppercase tracking-wider">Govt. of West Bengal</span>
+            <span class="text-amber-300 text-xs font-mono">SBHI SOP Case-I Digitization</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight">Bagula II Gram Panchayat <span class="font-bengali text-sm font-normal text-slate-300">(বগুলা ২ নং গ্রাম পঞ্চায়েত)</span></h1>
+          <p class="text-xs text-emerald-200">Hanskhali Block · Nadia District · Sub-Registrar: SUSMITA BISWAS BARMAN</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/20 text-right">
+          <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Active Cyber Cafe Node</div>
+          <div id="header-node-name" class="text-xs font-bold text-white">Trust Media CSC</div>
+          <div id="header-csc-id" class="text-[10px] text-slate-300 font-mono">CSC ID: 373345540017 (Samrat Biswas)</div>
+        </div>
+        <button onclick="purgeZeroRetentionSession()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow-sm transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          <span>Purge & Logout (DPDP)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- DPDP RULES 2025 MANDATORY BILINGUAL CONSENT BANNER -->
+  <div class="no-print max-w-7xl mx-auto px-4 mt-4">
+    <div class="bg-emerald-50 border border-emerald-300 rounded-xl p-3.5 flex items-start gap-3 shadow-xs">
+      <div class="p-1.5 bg-emerald-600 text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+      </div>
+      <div class="flex-1 text-xs text-emerald-950 space-y-1">
+        <div class="font-bold flex items-center gap-2">
+          <span>Digital Personal Data Protection (DPDP) Rules 2025 & WB Zero-Retention Privacy Safeguard</span>
+          <span class="bg-emerald-600 text-white text-[9px] px-1.5 py-0.2 rounded uppercase">Enforced</span>
+        </div>
+        <p class="text-[11px] leading-relaxed text-emerald-800">
+          <strong>English:</strong> All citizen information and identity scans entered here are held exclusively in browser RAM during this active pre-verification session. No citizen data or scanned identity proofs are retained or stored on this cyber cafe computer.
+        </p>
+        <p class="text-[11px] leading-relaxed text-emerald-900 font-bengali">
+          <strong>বাংলা:</strong> ডিজিটাল ব্যক্তিগত ডেটা সুরক্ষা বিধি (DPDP 2025) অনুযায়ী এই পোর্টালে কাজের সময় কোনো নাগরিকের আধার কার্ড বা নথিপত্র সাইবার ক্যাফের কম্পিউটারে স্থায়ীভাবে সংরক্ষণ করা হয় না। কাজ শেষে "Purge & Logout" এ ক্লিক করলেই সমস্ত তথ্য মেমরি থেকে মুছে যাবে।
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER WITH STICKY SIDEBAR -->
+  <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+    <!-- STICKY SIDEBAR NAVIGATION -->
+    <aside class="no-print lg:col-span-1 space-y-4">
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2 sticky top-24">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2">Navigation Menu</div>
+        <button onclick="switchView('form-view')" id="nav-form" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-between bg-[#0B2545] text-white">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span>New Digitization (Form A)</span>
+          </span>
+          <span class="text-[10px] bg-emerald-500 text-white px-1.5 py-0.5 rounded">Case-I</span>
+        </button>
+
+        <button onclick="switchView('summary-view')" id="nav-summary" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-between text-slate-700 hover:bg-slate-100">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>Pre-Verification Summary</span>
+          </span>
+          <span id="badge-ready" class="hidden text-[10px] bg-amber-100 text-amber-900 font-mono px-1.5 py-0.5 rounded font-bold">Ready</span>
+        </button>
+
+        <button onclick="switchView('sandbox-view')" id="nav-sandbox" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-between text-slate-700 hover:bg-slate-100">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span>Phonetic Register Search</span>
+          </span>
+          <span class="text-[10px] bg-blue-100 text-blue-900 font-mono px-1.5 py-0.5 rounded">pg_trgm</span>
+        </button>
+
+        <button onclick="switchView('operator-view')" id="nav-operator" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-between text-slate-700 hover:bg-slate-100">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <span>Operator Authentication</span>
+          </span>
+          <span class="text-[10px] bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded font-bold">Online</span>
+        </button>
+
+        <button onclick="switchView('sop-view')" id="nav-sop" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-between text-slate-700 hover:bg-slate-100">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>SOP & Statutory Checklist</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Quick Administrative Information Box -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs text-xs space-y-2">
+        <div class="font-bold text-slate-900 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <span>Jurisdiction Registry</span>
+        </div>
+        <div class="text-slate-600 space-y-1 text-[11px]">
+          <div><strong>State:</strong> West Bengal</div>
+          <div><strong>District:</strong> Nadia</div>
+          <div><strong>Block:</strong> Hanskhali</div>
+          <div><strong>Gram Panchayat:</strong> Bagula II</div>
+          <div><strong>Sub-Registrar:</strong> Susmita Biswas Barman</div>
+          <div><strong>Statute:</strong> RBD Act 1969 / WB RBD Rules 2000</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN INTERACTIVE CONTENT AREA -->
+    <main class="lg:col-span-3">
+
+      <!-- VIEW 1: NEW DIGITIZATION FILE (FORM A) -->
+      <section id="form-view" class="space-y-6">
+        
+        <!-- Case-I Dual Path Toggle -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Select SBHI SOP Case-I Digitization Scenario:</label>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div onclick="selectDigitizationPath('path_a')" id="card-path-a" class="p-4 rounded-xl border-2 border-emerald-600 bg-emerald-50/40 cursor-pointer transition">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span>
+                  <span>Path A: Manual Record Intact & Legible</span>
+                </span>
+                <span id="badge-path-a" class="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded">Selected</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                Citizen holds an intact, legible handwritten birth certificate issued prior to 2016. Direct verification against GP Volume Register.
+              </p>
+              <div class="mt-2 text-[11px] font-semibold text-emerald-800">
+                Mandatory Scans: Certificate (&lt;100 KB) + Mother's ID (&lt;50 KB)
+              </div>
+            </div>
+
+            <div onclick="selectDigitizationPath('path_b')" id="card-path-b" class="p-4 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-white cursor-pointer transition">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-amber-600 inline-block"></span>
+                  <span>Path B: Manual Record Lost / Damaged</span>
+                </span>
+                <span id="badge-path-b" class="hidden text-[10px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded">Selected</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                Certificate is missing, torn, or destroyed. Non-Availability search triggered with Police General Diary (GD) entry.
+              </p>
+              <div class="mt-2 text-[11px] font-semibold text-amber-800">
+                Mandatory Scans: Police GD (&lt;200 KB) + Secondary Age Proof (&lt;150 KB)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Container -->
+        <form onsubmit="handleFormSubmit(event)" class="space-y-6">
+
+          <!-- Section 1: Child Details -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold text-[#0B2545] flex items-center gap-2 pb-2 border-b border-slate-100">
+              <span class="w-5 h-5 rounded-full bg-[#0B2545] text-white flex items-center justify-center text-xs">1</span>
+              <span>Child & Birth Details / শিশুর তথ্যাবলী</span>
+            </h3>
+
+            <div class="grid sm:grid-cols-3 gap-4">
+              <div class="sm:col-span-2 space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Child Full Name (English - Auto Uppercase) <span class="text-red-500">*</span></label>
+                <input type="text" id="inp-child-name" oninput="this.value = this.value.toUpperCase()" value="GANESH PRAMANIK" class="w-full px-3 py-2 border rounded-lg text-sm font-mono uppercase focus:ring-2 focus:ring-[#0B2545]" placeholder="e.g. GANESH PRAMANIK" required />
+                <p class="text-[10px] text-slate-500">Capital letters enforced to prevent administrative misspelling mismatches.</p>
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">শিশুর নাম (বাংলায় - Bengali)</label>
+                <input type="text" id="inp-child-name-bn" value="গণেশ প্রামাণিক" class="w-full px-3 py-2 border rounded-lg text-sm font-bengali focus:ring-2 focus:ring-[#0B2545]" placeholder="যেমন: গণেশ প্রামাণিক" />
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-4">
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Gender / লিঙ্গ <span class="text-red-500">*</span></label>
+                <select id="inp-gender" class="w-full px-3 py-2 border rounded-lg text-sm">
+                  <option value="Male" selected>Male (পুরুষ)</option>
+                  <option value="Female">Female (মহিলা)</option>
+                  <option value="Transgender">Transgender (তৃতীয় লিঙ্গ)</option>
+                </select>
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Date of Birth / জন্মতারিখ <span class="text-red-500">*</span></label>
+                <input type="date" id="inp-dob" value="1998-04-12" class="w-full px-3 py-2 border rounded-lg text-sm" required />
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Place of Birth (Bagula II GP Area) <span class="text-red-500">*</span></label>
+                <input type="text" id="inp-pob" value="Bagula Collegepara, Nadia" class="w-full px-3 py-2 border rounded-lg text-sm" required />
+              </div>
+            </div>
+
+            <!-- Path A Dynamic Fields -->
+            <div id="path-a-fields" class="grid sm:grid-cols-2 gap-4 pt-2 border-t border-dashed border-slate-200">
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Old Registration Number <span class="text-red-500">*</span></label>
+                <input type="text" id="inp-old-reg-no" value="B-142/98" class="w-full px-3 py-2 border rounded-lg text-sm font-mono" placeholder="e.g. B-142/98 or 84/2001" />
+                <p class="text-[10px] text-slate-500">Stated on the top-left margin of the manual birth certificate.</p>
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Original Registration Date</label>
+                <input type="date" id="inp-old-reg-date" value="1998-04-20" class="w-full px-3 py-2 border rounded-lg text-sm" />
+              </div>
+            </div>
+
+            <!-- Path B Dynamic Fields (Hidden by default) -->
+            <div id="path-b-fields" class="hidden space-y-3 p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs">
+              <div class="font-bold text-amber-900 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span>Path B: Lost / Damaged Record Non-Availability Search</span>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div class="space-y-1">
+                  <label class="text-[11px] font-semibold text-amber-950">Registration Number</label>
+                  <input type="text" value="NOT_AVAILABLE (NON-AVAILABILITY SEARCH)" readonly class="w-full px-2.5 py-1.5 bg-amber-100/70 border border-amber-300 rounded font-mono text-xs font-bold text-amber-900" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[11px] font-semibold text-amber-950">Police GD Loss Report No <span class="text-red-500">*</span></label>
+                  <input type="text" id="inp-police-gd-no" placeholder="e.g. GD No. 412/2026" class="w-full px-2.5 py-1.5 bg-white border border-amber-300 rounded text-xs font-mono" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[11px] font-semibold text-amber-950">Police GD Entry Date <span class="text-red-500">*</span></label>
+                  <input type="date" id="inp-police-gd-date" class="w-full px-2.5 py-1.5 bg-white border border-amber-300 rounded text-xs" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Parents Details -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold text-[#0B2545] flex items-center gap-2 pb-2 border-b border-slate-100">
+              <span class="w-5 h-5 rounded-full bg-[#0B2545] text-white flex items-center justify-center text-xs">2</span>
+              <span>Parental Information (Mother's Identity Mandatory) / পিতা-মাতার বিবরণ</span>
+            </h3>
+
+            <!-- Mother's Details (Mandatory) -->
+            <div class="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-200 space-y-3">
+              <div class="font-bold text-xs text-emerald-900 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Mother's Details (Mandatory per West Bengal SBHI SOP)</span>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-2 space-y-1">
+                  <label class="text-xs font-semibold text-slate-700">Mother's Full Name (Auto Uppercase) <span class="text-red-500">*</span></label>
+                  <input type="text" id="inp-mother-name" oninput="this.value = this.value.toUpperCase()" value="SITA PRAMANIK" class="w-full px-3 py-2 border rounded-lg text-sm font-mono uppercase" required />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-700">Mother's Mobile Number <span class="text-red-500">*</span></label>
+                  <input type="tel" id="inp-mother-mobile" maxlength="10" value="9832104567" class="w-full px-3 py-2 border rounded-lg text-sm font-mono" required />
+                </div>
+              </div>
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-700">Mother's ID Proof Type</label>
+                  <select id="inp-mother-id-type" class="w-full px-3 py-2 border rounded-lg text-sm">
+                    <option value="Aadhaar Card" selected>Aadhaar Card (আধার কার্ড)</option>
+                    <option value="EPIC Voter ID">Voter ID / EPIC (ভোটার কার্ড)</option>
+                    <option value="PAN Card">PAN Card</option>
+                  </select>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-700">Mother's ID Number</label>
+                  <input type="text" id="inp-mother-id-no" value="XXXX-XXXX-4812" class="w-full px-3 py-2 border rounded-lg text-sm font-mono" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Father's Details (Optional) -->
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+              <div class="font-bold text-xs text-slate-600 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Father's Details (Optional / প্রযোজ্য হলে)</span>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-2 space-y-1">
+                  <label class="text-xs font-semibold text-slate-700">Father's Full Name (Auto Uppercase)</label>
+                  <input type="text" id="inp-father-name" oninput="this.value = this.value.toUpperCase()" value="NAGARI PRAMANIK" class="w-full px-3 py-2 border rounded-lg text-sm font-mono uppercase" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-700">Father's ID Type</label>
+                  <select id="inp-father-id-type" class="w-full px-3 py-2 border rounded-lg text-sm">
+                    <option value="Aadhaar Card">Aadhaar Card</option>
+                    <option value="EPIC Voter ID">Voter ID / EPIC</option>
+                    <option value="PAN Card">PAN Card</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Addresses -->
+            <div class="space-y-3">
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Mother's Address at Time of Child's Birth <span class="text-red-500">*</span></label>
+                <input type="text" id="inp-present-address" value="Vill- Bagula Collegepara, P.O- Bagula, P.S- Hanskhali, Dist- Nadia, PIN- 741502" class="w-full px-3 py-2 border rounded-lg text-sm" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Uploads & Strict Real-time File Size Validation -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold text-[#0B2545] flex items-center gap-2 pb-2 border-b border-slate-100">
+              <span class="w-5 h-5 rounded-full bg-[#0B2545] text-white flex items-center justify-center text-xs">3</span>
+              <span>Document Uploads & Strict Size Validation / নথি আপলোড</span>
+            </h3>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <!-- Upload 1: Certificate or Police GD -->
+              <div id="upload-box-cert" class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-bold text-slate-900">Old Handwritten Certificate Scan <span class="text-red-500">*</span></label>
+                  <span class="text-[10px] bg-slate-200 text-slate-800 font-mono px-2 py-0.5 rounded font-bold">Max 100 KB</span>
+                </div>
+                <input type="file" id="file-old-cert" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFileSize(this, 100, 'cert-status')" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#0B2545] file:text-white hover:file:bg-[#07192f] cursor-pointer" />
+                <div id="cert-status" class="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                  ✓ Default sample attached (78.4 KB &lt; 100 KB)
+                </div>
+              </div>
+
+              <!-- Upload 2: Mother's ID (<50 KB) -->
+              <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-bold text-slate-900">Mother's Identity Proof Scan <span class="text-red-500">*</span></label>
+                  <span class="text-[10px] bg-slate-200 text-slate-800 font-mono px-2 py-0.5 rounded font-bold">Max 50 KB</span>
+                </div>
+                <input type="file" id="file-mother-id" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFileSize(this, 50, 'mother-id-status')" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#0B2545] file:text-white hover:file:bg-[#07192f] cursor-pointer" />
+                <div id="mother-id-status" class="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                  ✓ Default sample attached (42.1 KB &lt; 50 KB)
+                </div>
+              </div>
+
+              <!-- Upload 3: Police GD (For Path B, hidden by default) -->
+              <div id="upload-box-gd" class="hidden sm:col-span-2 p-4 rounded-xl border border-amber-300 bg-amber-50 space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-bold text-amber-950">Police GD Loss Report Scan <span class="text-red-500">*</span></label>
+                  <span class="text-[10px] bg-amber-200 text-amber-900 font-mono px-2 py-0.5 rounded font-bold">Max 200 KB</span>
+                </div>
+                <input type="file" id="file-police-gd" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFileSize(this, 200, 'gd-status')" class="w-full text-xs text-amber-900 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-800 file:text-white cursor-pointer" />
+                <div id="gd-status" class="text-[11px] text-amber-800 font-semibold">
+                  Required for Path B: Police Station Loss Report
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Buttons -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div class="text-xs text-slate-500 flex items-center gap-1">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              <span>DPDP Rules 2025: All data processed in temporary browser memory.</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="purgeZeroRetentionSession()" class="px-4 py-2 border rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100">
+                Clear Form
+              </button>
+              <button type="submit" class="px-6 py-2.5 bg-[#0B2545] hover:bg-[#07192f] text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-2">
+                <span>Generate Pre-Verification Summary Sheet →</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- VIEW 2: PRE-VERIFICATION SUMMARY REPORT & PRINT SHEET -->
+      <section id="summary-view" class="hidden space-y-6">
+        <div class="no-print bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Pre-Verification Summary Sheet Generated</span>
+            </h3>
+            <p class="text-xs text-slate-500">Ref: <strong id="sum-ref-no" class="font-mono text-[#0B2545]">BGL2/DIGI/2026/0491</strong> · Ready for Sub-Registrar Submission</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="switchView('form-view')" class="px-3 py-1.5 border rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100">
+              ← Edit Details
+            </button>
+            <button onclick="window.print()" class="px-5 py-2 bg-[#0B2545] hover:bg-[#07192f] text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span>Print Pre-Verification Form (A4)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PRINT OPTIMIZED SUMMARY SHEET -->
+        <div class="print-card bg-white text-black p-6 sm:p-8 rounded-2xl border border-slate-300 shadow-sm space-y-6">
+          <div class="text-center border-b-2 border-black pb-4 space-y-1">
+            <div class="text-[11px] uppercase tracking-widest font-semibold text-slate-600">Government of West Bengal · Directorate of Health Services & Panchayats</div>
+            <h2 class="text-base sm:text-lg font-bold uppercase tracking-tight">OFFICE OF THE GRAM PANCHAYAT SUB-REGISTRAR (BIRTHS & DEATHS)</h2>
+            <h3 class="text-sm sm:text-base font-bold text-emerald-900 uppercase">BAGULA II GRAM PANCHAYAT, HANSKHALI, NADIA</h3>
+            <div class="text-xs">Under Section 12/17 of RBD Act, 1969 & Rule 12/13 of West Bengal RBD Rules, 2000</div>
+            <div class="inline-block bg-black text-white text-xs font-bold px-3 py-1 rounded mt-1 uppercase tracking-wide">
+              Case-I Legacy Birth Certificate Digitization — Pre-Verification Summary Sheet (Form A)
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs border-b border-slate-200 pb-2">
+            <div><strong>Pre-Verification Ref No:</strong> <span id="print-ref-no" class="font-mono font-bold text-sm">BGL2/DIGI/2026/0491</span></div>
+            <div><strong>Digitization Path:</strong> <span id="print-path-label" class="font-bold">PATH A (Manual Record Available & Legible)</span></div>
+            <div><strong>Date:</strong> <span id="print-timestamp">2026-09-15</span></div>
+          </div>
+
+          <!-- Table of Entered Details -->
+          <div class="space-y-2">
+            <div class="text-xs font-bold uppercase bg-slate-100 p-1.5 border border-slate-300">1. Citizen Digitized Record Particulars (Form A Standard)</div>
+            <table class="w-full text-xs border border-slate-300 border-collapse">
+              <tbody>
+                <tr class="border-b border-slate-300">
+                  <td class="w-1/3 p-2 font-semibold bg-slate-50 border-r border-slate-300">Child Full Name</td>
+                  <td class="p-2 font-bold font-mono" id="print-child-name">GANESH PRAMANIK</td>
+                </tr>
+                <tr class="border-b border-slate-300">
+                  <td class="p-2 font-semibold bg-slate-50 border-r border-slate-300">Gender & Date of Birth</td>
+                  <td class="p-2" id="print-dob-gender">Gender: Male | DOB: 1998-04-12</td>
+                </tr>
+                <tr class="border-b border-slate-300">
+                  <td class="p-2 font-semibold bg-slate-50 border-r border-slate-300">Place of Birth</td>
+                  <td class="p-2" id="print-pob">Bagula Collegepara, Nadia</td>
+                </tr>
+                <tr class="border-b border-slate-300" id="print-reg-row">
+                  <td class="p-2 font-semibold bg-slate-50 border-r border-slate-300">Old Manual Registration Particulars</td>
+                  <td class="p-2 font-mono" id="print-reg-details">Reg No: B-142/98 | Date: 1998-04-20</td>
+                </tr>
+                <tr class="border-b border-slate-300">
+                  <td class="p-2 font-semibold bg-slate-50 border-r border-slate-300">Mother's Details (Mandatory)</td>
+                  <td class="p-2" id="print-mother-details">SITA PRAMANIK (Aadhaar: XXXX-XXXX-4812 | Mobile: 9832104567)</td>
+                </tr>
+                <tr class="border-b border-slate-300">
+                  <td class="p-2 font-semibold bg-slate-50 border-r border-slate-300">Father's Details</td>
+                  <td class="p-2" id="print-father-details">NAGARI PRAMANIK (Aadhaar Provided)</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-semibold bg-slate-50 border-r border-slate-300">Address at Time of Birth</td>
+                  <td class="p-2" id="print-address">Vill- Bagula Collegepara, P.O- Bagula, P.S- Hanskhali, Dist- Nadia, PIN- 741502</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Checklist for GP Sub-Registrar Physical Verification -->
+          <div class="border-2 border-dashed border-slate-400 p-4 rounded-xl bg-slate-50 space-y-2">
+            <div class="text-xs font-bold uppercase text-black flex items-center gap-1.5">
+              <span>Physical Document Checklist Citizen Must Carry to Gram Panchayat Office:</span>
+            </div>
+            <ul class="text-xs space-y-1.5 list-disc pl-5 text-slate-800">
+              <li class="font-semibold" id="check-item-cert">Original handwritten paper birth certificate (for ink, volume, and watermark verification by Sub-Registrar).</li>
+              <li>Original Aadhaar card / Voter ID of Mother (Mandatory).</li>
+              <li>Original Aadhaar card / Voter ID of Father (if applicable).</li>
+              <li id="check-item-secondary" class="hidden font-semibold text-amber-900">Original Police GD Report from Hanskhali Police Station & Secondary Age Proof (Class-X Admit Card/Marksheet).</li>
+              <li>Two (2) colored passport size photographs of the applicant.</li>
+              <li>This Pre-Verification Summary Sheet with cyber cafe operator stamp and signature.</li>
+            </ul>
+          </div>
+
+          <!-- Signature Blocks -->
+          <div class="pt-8 grid grid-cols-3 gap-6 text-center text-xs">
+            <div class="border-t border-black pt-2">
+              <div class="h-10"></div>
+              <div class="font-bold">Signature of Informant / Citizen</div>
+              <div class="text-[10px] text-slate-500">Date: _______________</div>
+            </div>
+            <div class="border-t border-black pt-2">
+              <div class="h-10"></div>
+              <div id="print-operator-name" class="font-bold">Samrat Biswas</div>
+              <div id="print-node-title" class="text-[10px] text-slate-600 font-semibold">Trust Media CSC</div>
+              <div id="print-node-csc" class="text-[10px] text-slate-500 font-mono">CSC ID: 373345540017</div>
+            </div>
+            <div class="border-t border-black pt-2">
+              <div class="h-10"></div>
+              <div class="font-bold">SUSMITA BISWAS BARMAN</div>
+              <div class="text-[10px] text-slate-600 font-semibold">GP Sub-Registrar & Pradhan</div>
+              <div class="text-[10px] text-slate-500">Bagula II Gram Panchayat</div>
+            </div>
+          </div>
+
+          <div class="text-[10px] text-slate-500 text-center border-t border-slate-200 pt-3">
+            Issued at Cyber Cafe node under West Bengal SBHI Case-I Decentralized Digitization Protocol. Final approval, digital signature, and JMTP entry reserved for the Sub-Registrar.
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: PHONETIC NAME SEARCH SANDBOX (pg_trgm) -->
+      <section id="sandbox-view" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-6">
+        <div class="space-y-1">
+          <h3 class="text-base font-bold text-[#0B2545] flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span>Historical Manual Register Fuzzy Search Sandbox (PostgreSQL pg_trgm)</span>
+          </h3>
+          <p class="text-xs text-slate-600">
+            Simulates the Gram Panchayat Sub-Registrar's phonetic trigram lookup in legacy paper registers (1970–2015). Test variations of names in English or Bengali to find volume and folio references.
+          </p>
+        </div>
+
+        <div class="flex gap-2">
+          <input type="text" id="sandbox-query" oninput="runPhoneticSearch()" placeholder="Type citizen name (e.g. Ganesh Pramanik, Nagari Pramanik, অনিতা ঘোষ)..." value="Ganesh Pramanik" class="flex-1 px-3.5 py-2.5 border rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0B2545]" />
+          <button onclick="setSandboxQuery('Nagari Pramanik')" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded-lg">
+            Test "Nagari"
+          </button>
+          <button onclick="setSandboxQuery('সুবীর বিশ্বাস')" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded-lg font-bengali">
+            বাংলা পরীক্ষা
+          </button>
+        </div>
+
+        <!-- Results List -->
+        <div id="sandbox-results" class="space-y-3">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- VIEW 4: OPERATOR AUTHENTICATION -->
+      <section id="operator-view" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-xs max-w-lg mx-auto space-y-6">
+        <div class="text-center space-y-1">
+          <div class="w-12 h-12 rounded-xl bg-slate-100 text-[#0B2545] flex items-center justify-center mx-auto mb-2 font-bold text-lg">
+            CSC
+          </div>
+          <h3 class="text-base font-bold text-slate-900">Authorized Cyber Cafe Node Authentication</h3>
+          <p class="text-xs text-slate-500">Decentralized login simulator for registered Bagula II cyber cafes.</p>
+        </div>
+
+        <form onsubmit="handleOperatorLogin(event)" class="space-y-4">
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-700">Select Cyber Cafe Node</label>
+            <select id="sel-node" onchange="onNodeChange()" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold">
+              <option value="trust_media" selected>Trust Media CSC (ID: 373345540017 — Samrat Biswas)</option>
+              <option value="nayan_mondal">Nayan Mondal CSC (ID: 373345540248 — Nayan Mondal)</option>
+              <option value="joy_guru">Joy Guru Cyber Cafe CSC (ID: 373345540912 — Bappa Sarkar)</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-700">Operator Mobile Number</label>
+            <input type="tel" id="inp-op-mobile" value="9733241100" class="w-full px-3 py-2 border rounded-lg text-sm font-mono" />
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-700">Operator OTP (6 Digits)</label>
+              <button type="button" onclick="document.getElementById('inp-op-otp').value='928374'" class="text-[11px] text-[#0B2545] font-bold hover:underline">Quick Fill Test OTP (928374)</button>
+            </div>
+            <input type="text" id="inp-op-otp" value="928374" maxlength="6" class="w-full px-3 py-2 border rounded-lg text-center tracking-widest text-lg font-bold font-mono" />
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-[#0B2545] hover:bg-[#07192f] text-white text-xs font-bold rounded-lg shadow-sm">
+            Authenticate Node Session
+          </button>
+        </form>
+      </section>
+
+      <!-- VIEW 5: SOP GUIDELINES & STATUTORY CHECKLIST -->
+      <section id="sop-view" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-6 text-xs leading-relaxed">
+        <h3 class="text-base font-bold text-slate-900 pb-2 border-b border-slate-200">
+          West Bengal Directorate of Health Services — SBHI SOP Case-I Guidelines
+        </h3>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-200 space-y-2">
+            <h4 class="font-bold text-sm text-emerald-950">Path A: Intact Physical Certificate</h4>
+            <p>1. Operator must physically inspect handwritten certificate for watermark, volume, and seal of Bagula II GP.</p>
+            <p>2. Mandatory file size cap: Certificate scan &lt; 100 KB, Mother's Aadhaar &lt; 50 KB.</p>
+            <p>3. Generate Form A summary sheet and instruct citizen to present physical copy to the Sub-Registrar.</p>
+          </div>
+
+          <div class="p-4 bg-amber-50/50 rounded-xl border border-amber-200 space-y-2 text-amber-950">
+            <h4 class="font-bold text-sm text-amber-950">Path B: Lost / Damaged Certificate</h4>
+            <p>1. Citizen must produce a valid Police General Diary (GD) report from Hanskhali Police Station.</p>
+            <p>2. Non-Availability search is activated against paper registers.</p>
+            <p>3. Secondary age proof (Class-X Admit/Marksheet) is mandatory to prevent identity manipulation.</p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200 text-blue-950 space-y-2">
+          <div class="font-bold text-sm text-blue-900">May 2026 State Re-Verification Mandate</div>
+          <p>
+            Under the active re-verification drive, all manual certificates must be physically matched against original Volume Registers. Once verified, the Sub-Registrar signs the digital certificate with e-Sign on the Janma-Mrityu Tathya Portal (janmamrityutathya.wb.gov.in).
+          </p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- SCRIPT: ZERO-RETENTION LOGIC, pg_trgm FUZZY SEARCH, & VALIDATION -->
+  <script>
+    // Registered Nodes Database
+    const CYBER_NODES = {
+      trust_media: { name: "Trust Media CSC", cscId: "373345540017", operator: "Samrat Biswas", phone: "9733241100" },
+      nayan_mondal: { name: "Nayan Mondal CSC", cscId: "373345540248", operator: "Nayan Mondal", phone: "9474185200" },
+      joy_guru: { name: "Joy Guru Cyber Cafe CSC", cscId: "373345540912", operator: "Bappa Sarkar", phone: "9832063400" }
+    };
+
+    // Historical Volume Register Records
+    const HISTORICAL_REGISTERS = [
+      { name: "GANESH PRAMANIK", name_bn: "গণেশ প্রামাণিক", father: "NAGARI PRAMANIK", mother: "SITA PRAMANIK", dob: "1998-04-12", regNo: "B-142/98", regDate: "1998-04-20", village: "Bagula Collegepara", volume: "Volume 1998 (Book 2)", folio: "Folio 42" },
+      { name: "NAGARI PRAMANIK", name_bn: "নগরী প্রামাণিক", father: "RADHAMADHAB PRAMANIK", mother: "SARALA PRAMANIK", dob: "1974-11-03", regNo: "B-89/74", regDate: "1974-11-18", village: "Bathanpara", volume: "Volume 1974 (Book 1)", folio: "Folio 18" },
+      { name: "SUBIR BISWAS", name_bn: "সুবীর বিশ্বাস", father: "AMALENDU BISWAS", mother: "REBA BISWAS", dob: "2000-08-15", regNo: "B-304/2000", regDate: "2000-08-25", village: "Muraghacha Colony", volume: "Volume 2000 (Book 3)", folio: "Folio 88" },
+      { name: "ANITA GHOSH", name_bn: "অনিতা ঘোষ", father: "TARAPADA GHOSH", mother: "MIRA GHOSH", dob: "1995-02-19", regNo: "B-072/95", regDate: "1995-03-01", village: "Kashipur", volume: "Volume 1995 (Book 1)", folio: "Folio 31" }
+    ];
+
+    let currentPath = "path_a";
+    let activeNode = CYBER_NODES.trust_media;
+
+    // Switch View
+    function switchView(viewId) {
+      const views = ['form-view', 'summary-view', 'sandbox-view', 'operator-view', 'sop-view'];
+      views.forEach(v => {
+        const el = document.getElementById(v);
+        if (el) el.classList.add('hidden');
+      });
+      const activeEl = document.getElementById(viewId);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      // Update nav styling
+      const navIds = ['nav-form', 'nav-summary', 'nav-sandbox', 'nav-operator', 'nav-sop'];
+      navIds.forEach(n => {
+        const btn = document.getElementById(n);
+        if (btn) {
+          btn.classList.remove('bg-[#0B2545]', 'text-white');
+          btn.classList.add('text-slate-700');
+        }
+      });
+      const targetNav = document.getElementById('nav-' + viewId.replace('-view', ''));
+      if (targetNav) {
+        targetNav.classList.add('bg-[#0B2545]', 'text-white');
+        targetNav.classList.remove('text-slate-700');
+      }
+
+      if (viewId === 'sandbox-view') {
+        runPhoneticSearch();
+      }
+    }
+
+    // Path Selection
+    function selectDigitizationPath(path) {
+      currentPath = path;
+      const cardA = document.getElementById('card-path-a');
+      const cardB = document.getElementById('card-path-b');
+      const badgeA = document.getElementById('badge-path-a');
+      const badgeB = document.getElementById('badge-path-b');
+      const pathAFields = document.getElementById('path-a-fields');
+      const pathBFields = document.getElementById('path-b-fields');
+      const uploadCert = document.getElementById('upload-box-cert');
+      const uploadGd = document.getElementById('upload-box-gd');
+
+      if (path === 'path_a') {
+        cardA.className = "p-4 rounded-xl border-2 border-emerald-600 bg-emerald-50/40 cursor-pointer transition";
+        cardB.className = "p-4 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-white cursor-pointer transition";
+        badgeA.classList.remove('hidden');
+        badgeB.classList.add('hidden');
+        pathAFields.classList.remove('hidden');
+        pathBFields.classList.add('hidden');
+        uploadCert.classList.remove('hidden');
+        uploadGd.classList.add('hidden');
+      } else {
+        cardB.className = "p-4 rounded-xl border-2 border-amber-600 bg-amber-50/40 cursor-pointer transition";
+        cardA.className = "p-4 rounded-xl border-2 border-slate-200 hover:border-emerald-400 bg-white cursor-pointer transition";
+        badgeB.classList.remove('hidden');
+        badgeA.classList.add('hidden');
+        pathAFields.classList.add('hidden');
+        pathBFields.classList.remove('hidden');
+        uploadCert.classList.add('hidden');
+        uploadGd.classList.remove('hidden');
+      }
+    }
+
+    // Strict File Size Validation
+    function validateFileSize(input, limitKb, statusId) {
+      const statusEl = document.getElementById(statusId);
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const sizeKb = (file.size / 1024).toFixed(1);
+
+      if (sizeKb > limitKb) {
+        statusEl.className = "text-[11px] text-red-600 font-bold";
+        statusEl.innerHTML = `⚠️ File size (${sizeKb} KB) exceeds the statutory ${limitKb} KB limit! Please compress before uploading.`;
+        alert(`File too large: ${sizeKb} KB exceeds maximum allowed ${limitKb} KB. Please compress file.`);
+      } else {
+        statusEl.className = "text-[11px] text-emerald-700 font-semibold";
+        statusEl.innerHTML = `✓ Valid scan uploaded: ${file.name} (${sizeKb} KB &lt;= ${limitKb} KB)`;
+      }
+    }
+
+    // Form Submission to Summary
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const childName = document.getElementById('inp-child-name').value.trim();
+      const dob = document.getElementById('inp-dob').value;
+      const motherName = document.getElementById('inp-mother-name').value.trim();
+
+      if (!childName || !dob || !motherName) {
+        alert("Please fill all mandatory fields (Child Name, Date of Birth, Mother's Name)");
+        return;
+      }
+
+      const randomRef = "BGL2/DIGI/2026/" + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('sum-ref-no').innerText = randomRef;
+      document.getElementById('print-ref-no').innerText = randomRef;
+      document.getElementById('print-timestamp').innerText = new Date().toLocaleString('en-IN');
+      document.getElementById('print-child-name').innerText = childName;
+      document.getElementById('print-dob-gender').innerText = `Gender: ${document.getElementById('inp-gender').value} | DOB: ${dob}`;
+      document.getElementById('print-pob').innerText = document.getElementById('inp-pob').value;
+      document.getElementById('print-mother-details').innerText = `${motherName} (${document.getElementById('inp-mother-id-type').value}: ${document.getElementById('inp-mother-id-no').value} | Mobile: ${document.getElementById('inp-mother-mobile').value})`;
+      document.getElementById('print-father-details').innerText = document.getElementById('inp-father-name').value ? `${document.getElementById('inp-father-name').value} (${document.getElementById('inp-father-id-type').value})` : "Not Provided";
+      document.getElementById('print-address').innerText = document.getElementById('inp-present-address').value;
+
+      if (currentPath === 'path_a') {
+        document.getElementById('print-path-label').innerText = "PATH A (Manual Record Available & Legible)";
+        document.getElementById('print-reg-details').innerText = `Reg No: ${document.getElementById('inp-old-reg-no').value} | Date: ${document.getElementById('inp-old-reg-date').value}`;
+        document.getElementById('check-item-cert').classList.remove('hidden');
+        document.getElementById('check-item-secondary').classList.add('hidden');
+      } else {
+        document.getElementById('print-path-label').innerText = "PATH B (Lost/Damaged Record - Police GD Entry)";
+        document.getElementById('print-reg-details').innerText = `NON-AVAILABILITY SEARCH | Police GD: ${document.getElementById('inp-police-gd-no').value} (Hanskhali P.S.)`;
+        document.getElementById('check-item-cert').classList.add('hidden');
+        document.getElementById('check-item-secondary').classList.remove('hidden');
+      }
+
+      document.getElementById('badge-ready').classList.remove('hidden');
+      switchView('summary-view');
+    }
+
+    // Zero-Retention Purge (DPDP 2025 Mandate)
+    function purgeZeroRetentionSession() {
+      document.getElementById('inp-child-name').value = '';
+      document.getElementById('inp-child-name-bn').value = '';
+      document.getElementById('inp-dob').value = '';
+      document.getElementById('inp-pob').value = '';
+      document.getElementById('inp-old-reg-no').value = '';
+      document.getElementById('inp-old-reg-date').value = '';
+      document.getElementById('inp-police-gd-no').value = '';
+      document.getElementById('inp-police-gd-date').value = '';
+      document.getElementById('inp-mother-name').value = '';
+      document.getElementById('inp-mother-mobile').value = '';
+      document.getElementById('inp-mother-id-no').value = '';
+      document.getElementById('inp-father-name').value = '';
+      document.getElementById('inp-present-address').value = '';
+      document.getElementById('file-old-cert').value = '';
+      document.getElementById('file-mother-id').value = '';
+      const fileGd = document.getElementById('file-police-gd');
+      if (fileGd) fileGd.value = '';
+      document.getElementById('badge-ready').classList.add('hidden');
+      try { sessionStorage.clear(); } catch(e){}
+      alert("🔒 DPDP Rules 2025 Zero-Retention Triggered: All citizen information, identity scans, and temporary caches have been wiped from browser memory.");
+      switchView('form-view');
+    }
+
+    // Operator Login
+    function handleOperatorLogin(e) {
+      e.preventDefault();
+      const otp = document.getElementById('inp-op-otp').value;
+      if (otp === "928374" || otp.length === 6) {
+        alert("Operator verified successfully at node: " + activeNode.name);
+        switchView('form-view');
+      } else {
+        alert("Invalid OTP. Enter test OTP: 928374");
+      }
+    }
+
+    function onNodeChange() {
+      const sel = document.getElementById('sel-node').value;
+      activeNode = CYBER_NODES[sel];
+      document.getElementById('inp-op-mobile').value = activeNode.phone;
+      document.getElementById('header-node-name').innerText = activeNode.name;
+      document.getElementById('header-csc-id').innerText = `CSC ID: ${activeNode.cscId} (${activeNode.operator})`;
+      document.getElementById('print-operator-name').innerText = activeNode.operator;
+      document.getElementById('print-node-title').innerText = activeNode.name;
+      document.getElementById('print-node-csc').innerText = "CSC ID: " + activeNode.cscId;
+    }
+
+    // pg_trgm Trigram Fuzzy Matching Algorithm
+    function trigramSimilarity(str1, str2) {
+      const s1 = (str1 || '').toLowerCase().replace(/[^a-z0-9\u0980-\u09FF]/g, '');
+      const s2 = (str2 || '').toLowerCase().replace(/[^a-z0-9\u0980-\u09FF]/g, '');
+      if (s1 === s2) return 100;
+      if (!s1 || !s2) return 0;
+      const getTrigrams = s => {
+        const pad = `  ${s} `;
+        const set = new Set();
+        for (let i = 0; i < pad.length - 2; i++) set.add(pad.substring(i, i + 3));
+        return set;
+      };
+      const t1 = getTrigrams(s1);
+      const t2 = getTrigrams(s2);
+      let common = 0;
+      t1.forEach(t => { if (t2.has(t)) common++; });
+      const union = t1.size + t2.size - common;
+      return union === 0 ? 0 : Math.round((common / union) * 100);
+    }
+
+    function setSandboxQuery(name) {
+      document.getElementById('sandbox-query').value = name;
+      runPhoneticSearch();
+    }
+
+    function runPhoneticSearch() {
+      const q = document.getElementById('sandbox-query').value.trim();
+      const resultsContainer = document.getElementById('sandbox-results');
+      if (!q) {
+        resultsContainer.innerHTML = '<div class="text-xs text-slate-500 py-6 text-center">Type a name to search legacy registers.</div>';
+        return;
+      }
+
+      const scored = HISTORICAL_REGISTERS.map(rec => {
+        const s1 = trigramSimilarity(q, rec.name);
+        const s2 = trigramSimilarity(q, rec.name_bn);
+        const s3 = trigramSimilarity(q, rec.father);
+        return { ...rec, score: Math.max(s1, s2, s3) };
+      }).filter(r => r.score > 20).sort((a, b) => b.score - a.score);
+
+      if (scored.length === 0) {
+        resultsContainer.innerHTML = '<div class="text-xs text-slate-500 py-6 text-center">No phonetic match found. Try another spelling variation.</div>';
+        return;
+      }
+
+      let html = '';
+      scored.forEach(rec => {
+        const badgeColor = rec.score >= 80 ? 'bg-emerald-600' : (rec.score >= 50 ? 'bg-amber-600' : 'bg-slate-600');
+        html += `
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-bold text-sm text-slate-900">${rec.name}</span>
+                <span class="text-xs text-slate-500 font-bengali">(${rec.name_bn})</span>
+                <span class="${badgeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded">${rec.score}% Phonetic Match</span>
+              </div>
+              <div class="text-xs text-slate-600 mt-1">
+                <strong>Father:</strong> ${rec.father} · <strong>Mother:</strong> ${rec.mother} · <strong>DOB:</strong> ${rec.dob}
+              </div>
+              <div class="text-[11px] text-[#0B2545] font-mono">
+                Manual Reg: ${rec.regNo} (Dated: ${rec.regDate}) · Village: ${rec.village}
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-xs font-bold text-emerald-800">${rec.volume}</div>
+              <div class="text-[10px] text-slate-500 font-mono">${rec.folio}</div>
+              <button onclick="copyToForm('${rec.name}', '${rec.name_bn}', '${rec.dob}', '${rec.regNo}', '${rec.regDate}', '${rec.village}', '${rec.father}', '${rec.mother}')" class="mt-1 px-3 py-1 bg-[#0B2545] text-white text-[11px] font-semibold rounded hover:bg-[#07192f]">
+                Copy to Form A →
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      resultsContainer.innerHTML = html;
+    }
+
+    function copyToForm(name, nameBn, dob, regNo, regDate, village, father, mother) {
+      document.getElementById('inp-child-name').value = name;
+      document.getElementById('inp-child-name-bn').value = nameBn;
+      document.getElementById('inp-dob').value = dob;
+      document.getElementById('inp-old-reg-no').value = regNo;
+      document.getElementById('inp-old-reg-date').value = regDate;
+      document.getElementById('inp-pob').value = village + ", Nadia";
+      document.getElementById('inp-father-name').value = father;
+      document.getElementById('inp-mother-name').value = mother;
+      selectDigitizationPath('path_a');
+      switchView('form-view');
+      alert(`Copied record for ${name} into Form A!`);
+    }
+
+    // Initial load
+    runPhoneticSearch();
+  </script>
+</body>
+</html>

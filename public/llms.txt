@@ -1,0 +1,11 @@
+# Bagula II Gram Panchayat
+
+> Official public service facilitation portal of Bagula II Gram Panchayat, Hanskhali Block, Nadia District, West Bengal. Provides information and redirection to government services for birth/death registration, WBPMS certificates, MGNREGA, PRD tax, and local certificate issuance.
+
+## Pages
+
+- [Home](/): Portal overview with search, service directory, and latest updates.
+- [Dependent Certificate](/dependent-certificate): Staff dependent certificate issuance workflow.
+- [Warish Certificate](/warish-certificate): Warish (succession) (warish) certificate issuance workflow.
+- [WBPMS Certificate Services](/wbpms-info): Document requirements and links for residential, income, caste, character and other certificates via WBPMS portal.
+- [Elected Representatives](/elected-representatives): Prodhan, Upa-Prodhan and ward members of Bagula II Gram Panchayat.
