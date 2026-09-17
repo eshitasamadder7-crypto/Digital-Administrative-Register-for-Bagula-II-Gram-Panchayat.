@@ -32,7 +32,6 @@ import {
   Layers,
 } from "lucide-react";
 import PublicShell from "./PublicShell";
-import { CitizenFaqSection } from "@/components/citizen/CitizenFaqSection";
 import { CitizenNoticeBoard } from "@/components/citizen/CitizenNoticeBoard";
 import CivilCertificateWorkflowModal from "@/components/citizen/CivilCertificateWorkflowModal";
 
@@ -963,10 +962,28 @@ export default function PublicIntro() {
         </div>
       </section>
 
-      {/* 9. CITIZEN INFORMATION DESK & FAQ */}
-      <section className="py-12 sm:py-16">
+      {/* 9. CITIZEN INFORMATION DESK & FAQ SHORTCUT */}
+      <section className="py-8 bg-slate-50 border-b border-border/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <CitizenFaqSection />
+          <div className="rounded-2xl border border-primary/20 bg-white p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+            <div className="space-y-1 text-center sm:text-left">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold">
+                <HelpCircle size={13} />
+                <span>Citizen Information Desk</span>
+              </div>
+              <h3 className="text-sm font-bold text-foreground">Need help or have questions regarding applications?</h3>
+              <p className="text-xs text-muted-foreground">
+                Find answers regarding Warish certificates, birth digitization, and Gram Panchayat procedures in our FAQ section.
+              </p>
+            </div>
+            <Link
+              to="/public/faq"
+              className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition flex items-center gap-1.5"
+            >
+              <span>View FAQ &amp; Information Desk</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
         </div>
       </section>
 

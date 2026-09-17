@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   Home, Briefcase, FileText, ScrollText, Bell, HelpCircle,
@@ -345,7 +345,28 @@ const formatUpdateDate = (dateStr: string) => {
 
 
 export default function Index() {
-  const [activeSection, setActiveSection] = useState<Section>("home");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
+  const [activeSection, setActiveSection] = useState<Section>(() => {
+    const s = searchParams.get("section");
+    if (s && ["home", "services", "certificates", "notices", "faq", "help"].includes(s)) {
+      return s as Section;
+    }
+    if (location.hash === "#faq" || location.hash === "#faq-section") {
+      return "faq";
+    }
+    return "home";
+  });
+
+  useEffect(() => {
+    const s = searchParams.get("section");
+    if (s && ["home", "services", "certificates", "notices", "faq", "help"].includes(s)) {
+      setActiveSection(s as Section);
+    } else if (location.hash === "#faq" || location.hash === "#faq-section") {
+      setActiveSection("faq");
+    }
+  }, [searchParams, location.hash]);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedDate, setExpandedDate] = useState<string | null>(getTodayStr());
   const [redirectGuide, setRedirectGuide] = useState<RedirectGuide | null>(null);
@@ -730,8 +751,29 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Frequently Asked Questions Section on Landing Page */}
-                <CitizenFaqSection onSelectServiceGuide={openGuide} className="pt-6" />
+                {/* Clean Compact Link to FAQ & Information Desk */}
+                <div className="pt-4 flex items-center justify-between gap-3 text-xs text-muted-foreground border-t border-border/40">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <HelpCircle size={14} className="text-primary" />
+                    <span>Have questions or need assistance?</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection("faq");
+                      setSearchParams((p) => {
+                        const n = new URLSearchParams(p);
+                        n.set("section", "faq");
+                        return n;
+                      });
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+                  >
+                    <span>Citizen Information Desk &amp; FAQ</span>
+                    <ArrowRight size={12} />
+                  </button>
+                </div>
               </>
             )}
           </div>
@@ -1198,7 +1240,28 @@ export default function Index() {
               </div>
             </div>
 
-            <CitizenFaqSection onSelectServiceGuide={openGuide} className="pt-2" />
+            <div className="rounded-2xl border border-border/60 bg-white/70 backdrop-blur-sm p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="space-y-0.5 text-center sm:text-left">
+                <p className="font-semibold text-foreground">Looking for detailed answers &amp; SOP guidelines?</p>
+                <p className="text-muted-foreground">Visit our dedicated Citizen Information Desk &amp; Frequently Asked Questions section.</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setActiveSection("faq");
+                  setSearchParams((p) => {
+                    const n = new URLSearchParams(p);
+                    n.set("section", "faq");
+                    return n;
+                  });
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="shrink-0 text-xs font-semibold"
+              >
+                Go to FAQ Section →
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -1222,7 +1285,20 @@ export default function Index() {
             return (
               <button
                 key={item.id}
-                onClick={() => { setActiveSection(item.id); setSearchQuery(""); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                onClick={() => {
+                  setActiveSection(item.id);
+                  setSearchQuery("");
+                  setSearchParams((p) => {
+                    const n = new URLSearchParams(p);
+                    if (item.id === "home") {
+                      n.delete("section");
+                    } else {
+                      n.set("section", item.id);
+                    }
+                    return n;
+                  });
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 className={`flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-200 min-w-[56px] ${
                   isActive
                     ? "text-primary"

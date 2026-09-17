@@ -42,6 +42,7 @@ import ApplicationWizard from "./pages/deo/ApplicationWizard.tsx";
 import DarHub from "./pages/dar/DarHub.tsx";
 import OAuthConsent from "./pages/OAuthConsent.tsx";
 import PublicIntro from "./pages/public/PublicIntro.tsx";
+import PublicFaq from "./pages/public/PublicFaq.tsx";
 import PublicRegister from "./pages/public/PublicRegister.tsx";
 import PublicLogin from "./pages/public/PublicLogin.tsx";
 import PublicDashboard from "./pages/public/PublicDashboard.tsx";
@@ -61,7 +62,8 @@ function AppLayout() {
   const isDarHub = location.pathname.startsWith("/dar");
   const isPublicPortal = location.pathname.startsWith("/public");
   const isAdmin = location.pathname.startsWith("/admin");
-  const hideChrome = isHome || isDarHub || isPublicPortal || isAdmin;
+  const isFaq = location.pathname === "/faq";
+  const hideChrome = isHome || isDarHub || isPublicPortal || isAdmin || isFaq;
 
   return (
     <>
@@ -69,6 +71,7 @@ function AppLayout() {
       <main className={hideChrome ? "" : "flex-1"}>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/faq" element={<PublicFaq />} />
           <Route path="/dar" element={<DarHub />} />
           <Route path="/service/:slug" element={<ServiceDetailPage />} />
           <Route path="/dependent-certificate" element={<RequireAdmin><DependentCertificate /></RequireAdmin>} />
@@ -83,6 +86,7 @@ function AppLayout() {
           <Route path="/elected-representatives" element={<ElectedRepresentatives />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/public" element={<PublicIntro />} />
+          <Route path="/public/faq" element={<PublicFaq />} />
           <Route path="/public/register" element={<PublicRegister />} />
           <Route path="/public/login" element={<PublicLogin />} />
           <Route path="/public/dashboard" element={<RequireCitizen><PublicDashboard /></RequireCitizen>} />

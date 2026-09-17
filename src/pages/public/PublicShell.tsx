@@ -32,7 +32,7 @@ export default function PublicShell({ children }: { children: ReactNode }) {
     { label: "Track Application", to: "/public/login", icon: FileCheck2 },
     { label: "Verify Certificate", to: "/verify", icon: ShieldCheck },
     { label: "Notice Board", to: "/public#notices", icon: Bell },
-    { label: "Help & FAQ", to: "/public#faq-section", icon: HelpCircle },
+    { label: "Help & FAQ", to: "/public/faq", icon: HelpCircle },
   ];
 
   return (
